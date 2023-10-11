@@ -15,19 +15,12 @@
 //  ### #    #  ####  ######  ####  #####  ######  ####
 //
 ////////////////////////////////////////////////////////////////////////
-#include <ESP8266WebServer.h>
+// #include <ESP8266WebServer.h>
 #include <ESP8266WiFi.h>
 #include <FastLED.h>
+#include <OneButton.h>
 #include <Streaming.h>
 #include <WiFiClient.h>
-
-// Effects
-#include "ColourCycle.h"
-#include "ColourFade.h"
-#include "Crisscross.h"
-#include "Fire.h"
-#include "OneButton.h"
-#include "Rainbow.h"
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -42,8 +35,9 @@
 ////////////////////////////////////////////////////////////////////////
 #define on LOW
 #define off HIGH
-#define pushButton 13  // D7
-#define ledPin 12      // D6
+#define topButtonPin 13  // D7
+#define bottomButtonPin 14
+#define ledPin 12  // D6
 
 #define totalLEDs 8
 #define wifiChannel 10
@@ -51,6 +45,7 @@
 // #define totalGameTime (1 * 60 * 1000)
 #define totalGameTime (5 * 1000)
 #define totalPreStartTime (5 * 1000)
+#define lobbyCountdownTime (5 * 1000)
 
 #define humanColour 0xba3939
 #define zombieColour 0x094aef
@@ -77,7 +72,8 @@
 CRGB currentLED[totalLEDs];
 
 // Button
-OneButton button(pushButton, true);
+OneButton topButton(topButtonPin, true);
+OneButton bottomButton(bottomButtonPin, true);
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -90,8 +86,14 @@ OneButton button(pushButton, true);
 //     #    #    # #    # # #    # #####  ###### ######  ####
 //
 ////////////////////////////////////////////////////////////////////////
-char* team = "Human";
+enum Team {
+  human,
+  zombie
+};
+
 char* mode = "Game";
+
+int team = 0;
 
 // Options
 int LEDBrightness = 10;  // As a percentage (saved as a dynamic variable to let us change later)
@@ -105,17 +107,32 @@ int timeCaught = 0;
 int gameTimeLeft = totalGameTime;
 int timeGameStarted = 0;
 int preStartTimeLeft = totalPreStartTime;
-int timeCountDownStarted = 0;
+int lobbyCountdownTimeRemaining = lobbyCountdownTime;
 
-// State machine variables (think very carefully before messing around with these, they can and will break everything)
-bool countDownFinished = false;
-bool countDownRunning = false;
-bool gameFinished = false;
-bool gameRunning = false;
-bool restartGame = false;
-bool beenCaught = false;
-bool gameReady = false;
-bool started = false;
+//! State machine variables (think very carefully before messing around with these, they can and will break everything)
+// bool countDownFinished = false;
+// bool countDownRunning = false;
+// bool gameFinished = false;
+// bool gameRunning = false;
+// bool restartGame = false;
+// bool beenCaught = false;
+// bool gameReady = false;
+// bool started = false;
+
+bool countDownFinished,
+    countDownRunning,
+    gameFinished,
+    gameRunning,
+    restartGame,
+    beenCaught,
+    gameReady,
+    started,
+    inGame = false;
+
+bool inLobby = true;
+bool lobbyCountdownRunning = false;
+int timeCountDownStarted = 0;
+int timeLobbyCountdownStarted = 0;
 
 int currentDistance = 0;
 
@@ -134,17 +151,11 @@ int postGameLobbyCounter = totalLEDs - 1;
 //
 ////////////////////////////////////////////////////////////////////////
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial << "Zombie Game" << endl;
 
   // Pin setups
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(pushButton, INPUT_PULLUP);
-  pinMode(zombiePin, INPUT_PULLUP);
-  pinMode(humanPin, INPUT);
-  pinMode(gamePin, INPUT);
-  pinMode(ambientPin, INPUT);
-
   digitalWrite(LED_BUILTIN, off);
 
   // LEDs
@@ -153,20 +164,9 @@ void setup() {
   FastLED.setCorrection(0xFFB0F0);
   // FastLED.setDither( 1 );
 
-  // Button options
-  button.setDebounceTicks(20);  // 20
-  button.setClickTicks(350);    // 350
-  button.setPressTicks(250);    // 250
-
-  // Setup Button Functions
-  button.attachLongPressStart(longPress);
-  button.attachDoubleClick(doubleClick);
-  button.attachClick(click);
+  startButtons();
 
   allOff();
-
-  // Setup the game
-  // start(team);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ void setup() {
 //
 ///////////////////////////////////////////////////////////////////////
 void loop(void) {
-  button.tick();
+  tickButtons();
   // Serial << digitalRead(zombiePin) << endl;
 
   // Serial <<  "Zombie: "   << digitalRead(zombiePin);
@@ -191,10 +191,10 @@ void loop(void) {
 
   // delay(100);
 
-  if (digitalRead(gamePin))
-    setupGame();
-  else if (digitalRead(ambientPin))
-    ambient();
-  else
-    allOff();
+  runTheGame();
+
+  // for (int i = 0; i < totalLEDs; i++) {
+  //   currentLED[i] = 0xff0000;
+  // }
+  // FastLED.show();
 }

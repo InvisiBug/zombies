@@ -1,10 +1,4 @@
 ////////////////////////////////////////////////////////////////////////
-//  Matthew Kavanagh
-//
-//  Zombies
-//  27/02/2019
-//  *********
-////////////////////////////////////////////////////////////////////////
 //
 //   #####
 //  #     #   ##   #    # ######
@@ -16,17 +10,14 @@
 //
 ////////////////////////////////////////////////////////////////////////
 void game() {
-  crissCross.run(50);
-
   int n = WiFi.scanNetworks(false, false, wifiChannel);
 
-  if (team == "Human")  // Human Team
-  {
+  if (team == human) {
     currentDistance = maxDistance;
 
     for (int i = 0; i < n; i++) {
-      if (WiFi.SSID(i) == "Zombie")  // Zombie close
-      {
+      if (WiFi.SSID(i) == "Zombie") {
+        // Zombie close
         currentDistance = abs(WiFi.RSSI(i));
         int indicatorLevel = map(currentDistance, maxDistance, bitingDistance, 0, totalLEDs);
         indicatorLevel = constrain(indicatorLevel, 0, totalLEDs);  // prevents crashing due to trying to show more than there actually are
@@ -47,7 +38,7 @@ void game() {
     Serial << currentDistance << endl;  // Print out distance
   }
 
-  else if (team == "Zombie")  // Zombie Team
+  else if (team == zombie)  // Zombie Team
   {
     currentDistance = maxDistance;
 
@@ -72,8 +63,8 @@ void game() {
 }
 
 void checkIfBitten() {
-  if (currentDistance < bitingDistance)  // Getting Bitten
-  {
+  // Getting Bitten
+  if (currentDistance < bitingDistance) {
     if (!beenCaught) {
       timeCaught = millis();
       beenCaught = true;
@@ -82,17 +73,17 @@ void checkIfBitten() {
     timeNow = millis() - timeCaught;
     Serial << "Gonna get turned" << endl;
 
-    if (timeNow >= timeTillTurned)  // Turned
-    {
+    // Turned
+    if (timeNow >= timeTillTurned) {
       Serial << "Turned" << endl;
 
-      team = "Zombie";
-      start(team);
+      team = zombie;
+      startWiFi();
     }
   }
 
-  else  // Not getting bitten
-  {
+  // Not getting bitten
+  else {
     timeCaught = 0;
     beenCaught = false;
   }

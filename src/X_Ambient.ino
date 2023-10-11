@@ -1,4 +1,0 @@
-void ambient()
-{
-  colourCycle.run();
-}
