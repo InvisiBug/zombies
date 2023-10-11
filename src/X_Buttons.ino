@@ -34,7 +34,6 @@ void topButtonClicked() {
 
 void topButtonHeld() {
   Serial << "Top Button Held" << endl;
-  started = false;
 }
 
 /*
@@ -47,6 +46,10 @@ void bottomButtonClicked() {
     inLobby = false;
     timeLobbyCountdownStarted = millis();
     startWiFi();
+  }
+
+  if (gameRunning) {
+    showTimeLeft();
   }
 
   if (gameFinished) {

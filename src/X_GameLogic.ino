@@ -11,10 +11,18 @@
 ////////////////////////////////////////////////////////////////////////
 void runTheGame() {
   // Serial << "Setup Game" << endl;
-  if (inLobby) {
-    preGameLobby();  // Players not ready, pre game lobby
+  if (!gameRunning) {
+    if (inLobby) {
+      preGameLobby();  // Players not ready, pre game lobby
+    } else {
+      lobbyCountdown();  // Players ready, begin countdown
+    }
   } else {
-    lobbyCountdown();  // Players ready, begin countdown
+    if (gameTimeRemaining()) {
+      game();  // Still time remaining, play game
+    } else {
+      endGameLobby();  // Game finished, final lobby
+    }
   }
 }
 
@@ -32,35 +40,13 @@ void lobbyCountdown() {
 
 void checkCountDownTime() {
   // Serial << "Check Count Down Time" << endl;
-  if (lobbyCountdownFinished())
-    runGame();
-  else
-    countDownAnimation();  // count down animation;
-}
-
-void runGame() {
-  Serial << "Game running" << endl;
-  if (gameRunning)
-    checkGameTime();  // Game running
-  else                // Game starts, take current time
-  {
+  if (lobbyCountdownFinished()) {
+    // runGame();
     gameRunning = true;
     timeGameStarted = millis();
+  } else {
+    countDownAnimation();  // count down animation;
   }
-}
-
-void checkGameTime() {
-  if (gameTimeRemaining())
-    game();  // Still time remaining, play game
-  else
-    endGame();  // Game finished
-}
-
-void endGame() {
-  if (restartGame)
-    resetGame();  // Restarting game
-  else
-    endGameLobby();  // Game finished, final lobby
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -99,7 +85,7 @@ void endGameLobby() {
   gameFinished = true;
 
   setAllLEDs(0x000000);
-  delay(1000);
+  // delay(1000);
   setAllLEDs(getTeamColour());
-  delay(1500);
+  // delay(1500);
 }

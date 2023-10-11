@@ -43,8 +43,8 @@ void game() {
     currentDistance = maxDistance;
 
     for (int i = 0; i < n; i++) {
-      if (WiFi.SSID(i) == "Human")  // Human close
-      {
+      if (WiFi.SSID(i) == "Human") {
+        // Human close
         currentDistance = abs(WiFi.RSSI(i));
         int indicatorLevel = map(currentDistance, maxDistance, bitingDistance, 0, totalLEDs);
         indicatorLevel = constrain(indicatorLevel, 0, totalLEDs);  // prevents crashing due to trying to show more than there actually are

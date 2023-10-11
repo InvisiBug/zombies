@@ -19,23 +19,22 @@
  * Started by the bottom button click when in the lobby
  */
 void startWiFi() {
-  allOff();
+  // allOff();
   WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
 
   delay(100);  // Added to try and prevent crashing (Remove if not possible)
 
   WiFi.mode(WIFI_AP_STA);  // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
 
-  if (team == human) {
-    WiFi.softAP("Human", NULL, wifiChannel);
-  } else if (team == zombie) {
-    WiFi.softAP("Zombie", NULL, wifiChannel);
-  }
-
-  if (team) {
-    Serial << "Player is a human" << endl;
-  } else {
-    Serial << "Player is a zombie" << endl;
+  switch (team) {
+    case human:
+      Serial << "Player is a human" << endl;
+      WiFi.softAP("Human", NULL, wifiChannel);
+      break;
+    case zombie:
+      Serial << "Player is a zombie" << endl;
+      WiFi.softAP("Zombie", NULL, wifiChannel);
+      break;
   }
 }
 
@@ -70,16 +69,15 @@ void countDownAnimation()  // Add random selection
 }
 
 int getTeamColour() {
-  int teamColour;
   switch (team) {
     case human:
-      teamColour = humanColour;
+      return humanColour;
       break;
     case zombie:
-      teamColour = zombieColour;
+      return zombieColour;
       break;
   }
-  return teamColour;
+  return 0;  // Needed to prevent compile errors
 }
 
 void showTimeLeft() {
@@ -128,10 +126,11 @@ bool gameTimeRemaining() {
 
   printTimeRemaining(gameTimeLeft);
 
-  if (gameTimeLeft > 0)
+  if (gameTimeLeft > 0) {
     return true;
-  else
+  } else {
     return false;
+  }
 }
 
 /*
@@ -143,13 +142,13 @@ bool gameTimeRemaining() {
 bool lobbyCountdownFinished() {
   lobbyCountdownTimeRemaining = lobbyCountdownTime - (millis() - timeLobbyCountdownStarted);
 
-  printTimeRemaining(lobbyCountdownTimeRemaining);
+  // printTimeRemaining(lobbyCountdownTimeRemaining);
 
-  // if (preStartTimeLeft < 0)
-  //   return true;
-  // else
-  //   return false;
-  return false;
+  if (lobbyCountdownTimeRemaining < 0) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -173,19 +172,15 @@ void resetGame() {
   allOff();
 
   gameTimeLeft = totalGameTime;  // 45 mins
-  preStartTimeLeft = totalPreStartTime;
 
   timeGameStarted = 0;
   timeCountDownStarted = 0;
   lobbyCountdownTimeRemaining = lobbyCountdownTime;
 
-  gameReady = false;
   gameRunning = false;
-  started = false;
-  restartGame = false;
-  countDownFinished = false;
-  countDownRunning = false;
+
   gameFinished = false;
+  inLobby = true;
   preGameLobbyCounter = totalLEDs - 1;
   postGameLobbyCounter = totalLEDs - 1;
 }

@@ -43,14 +43,13 @@
 #define wifiChannel 10
 
 // #define totalGameTime (1 * 60 * 1000)
-#define totalGameTime (5 * 1000)
-#define totalPreStartTime (5 * 1000)
+#define totalGameTime (1 * 60 * 1000)
 #define lobbyCountdownTime (5 * 1000)
 
-#define humanColour 0xba3939
-#define zombieColour 0x094aef
+#define humanColour 0x0000ff
+#define zombieColour 0x00ff00
 #define randomColour 0x352465
-#define timeColour 0x789812
+#define timeColour 0xacacac
 
 #define zombiePin 16  // D0
 #define humanPin 14   // D5
@@ -106,26 +105,12 @@ int timeNow = 0;
 int timeCaught = 0;
 int gameTimeLeft = totalGameTime;
 int timeGameStarted = 0;
-int preStartTimeLeft = totalPreStartTime;
 int lobbyCountdownTimeRemaining = lobbyCountdownTime;
 
 //! State machine variables (think very carefully before messing around with these, they can and will break everything)
-// bool countDownFinished = false;
-// bool countDownRunning = false;
-// bool gameFinished = false;
-// bool gameRunning = false;
-// bool restartGame = false;
-// bool beenCaught = false;
-// bool gameReady = false;
-// bool started = false;
-
-bool countDownFinished,
-    countDownRunning,
-    gameFinished,
+bool gameFinished,
     gameRunning,
-    restartGame,
     beenCaught,
-    gameReady,
     started,
     inGame = false;
 
@@ -161,7 +146,7 @@ void setup() {
   // LEDs
   FastLED.addLeds<WS2811, ledPin, GRB>(currentLED, totalLEDs);
   FastLED.setBrightness(LEDBrightness * 2.55);
-  FastLED.setCorrection(0xFFB0F0);
+  // FastLED.setCorrection(0xFFB0F0);
   // FastLED.setDither( 1 );
 
   startButtons();
