@@ -30,6 +30,14 @@ void topButtonClicked() {
   if (inLobby) {
     team = !team;
   }
+
+  if (gameRunning) {
+    showTimeLeft();
+  }
+
+  if (gameFinished) {
+    resetGame();
+  }
 }
 
 void topButtonHeld() {

@@ -35,9 +35,9 @@
 ////////////////////////////////////////////////////////////////////////
 #define on LOW
 #define off HIGH
-#define topButtonPin 13  // D7
-#define bottomButtonPin 14
-#define ledPin 12  // D6
+#define topButtonPin 13     // D7
+#define bottomButtonPin 14  // D5
+#define ledPin 12           // D6
 
 #define totalLEDs 8
 #define wifiChannel 10
@@ -96,9 +96,9 @@ int team = 0;
 
 // Options
 int LEDBrightness = 10;  // As a percentage (saved as a dynamic variable to let us change later)
-int bitingDistance = 25;
+int bitingDistance = 30;
 int maxDistance = 50;
-int timeTillTurned = 5 * 1000;
+int timeTillTurned = 2 * 1000;
 
 // Timer Variables
 int timeNow = 0;
@@ -123,6 +123,8 @@ int currentDistance = 0;
 
 int preGameLobbyCounter = totalLEDs - 1;  // leds are wired up counter clockwise
 int postGameLobbyCounter = totalLEDs - 1;
+
+bool endGameLobbyDirection = 0;
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -152,6 +154,15 @@ void setup() {
   startButtons();
 
   allOff();
+
+  // allOff();
+  // WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
+
+  // delay(100);  // Added to try and prevent crashing (Remove if not possible)
+
+  // // WiFi.mode(WIFI_AP_STA);  // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
+
+  // WiFi.softAP("Zombie", NULL, wifiChannel);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +186,17 @@ void loop(void) {
   // Serial <<  " Ambient: " << digitalRead(ambientPin) << endl;
 
   // delay(100);
+
+  // Serial.print("Scan start ... ");
+  // int n = WiFi.scanNetworks();
+  // Serial.print(n);
+  // Serial.println(" network(s) found");
+  // for (int i = 0; i < n; i++) {
+  //   Serial.println(WiFi.SSID(i));
+  // }
+  // Serial.println();
+
+  // delay(5000);
 
   runTheGame();
 

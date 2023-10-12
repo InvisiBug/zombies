@@ -35,7 +35,7 @@ void game() {
 
     checkIfBitten();
 
-    Serial << currentDistance << endl;  // Print out distance
+    // Serial << currentDistance << endl;  // Print out distance
   }
 
   else if (team == zombie)  // Zombie Team
