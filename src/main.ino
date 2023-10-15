@@ -22,6 +22,8 @@
 #include <Streaming.h>
 #include <WiFiClient.h>
 
+#include "effects/Fire.h"
+
 ////////////////////////////////////////////////////////////////////////
 //
 //  ######
@@ -35,14 +37,17 @@
 ////////////////////////////////////////////////////////////////////////
 #define on LOW
 #define off HIGH
+
 #define topButtonPin 13     // D7
 #define bottomButtonPin 14  // D5
 #define ledPin 12           // D6
+#define time1Pin 2          // D4
+#define time2Pin 4          // D2
+#define time3Pin 5          // D1
 
 #define totalLEDs 8
 #define wifiChannel 10
 
-// #define totalGameTime (1 * 60 * 1000)
 #define totalGameTime (1 * 60 * 1000)
 #define lobbyCountdownTime (5 * 1000)
 
@@ -73,6 +78,10 @@ CRGB currentLED[totalLEDs];
 // Button
 OneButton topButton(topButtonPin, true);
 OneButton bottomButton(bottomButtonPin, true);
+
+// Effects
+// Crisscross crissCross(totalLEDs, currentLED, 20);
+Fire fire(totalLEDs, currentLED);
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -143,6 +152,9 @@ void setup() {
 
   // Pin setups
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(time1Pin, INPUT_PULLUP);
+  pinMode(time2Pin, INPUT_PULLUP);
+  pinMode(time3Pin, INPUT_PULLUP);
   digitalWrite(LED_BUILTIN, off);
 
   // LEDs
@@ -178,6 +190,7 @@ void setup() {
 ///////////////////////////////////////////////////////////////////////
 void loop(void) {
   tickButtons();
+
   // Serial << digitalRead(zombiePin) << endl;
 
   // Serial <<  "Zombie: "   << digitalRead(zombiePin);
@@ -197,6 +210,14 @@ void loop(void) {
   // Serial.println();
 
   // delay(5000);
+
+  if (!digitalRead(time1Pin)) {
+    Serial << "Time is 10 min" << endl;
+  } else if (!digitalRead(time2Pin)) {
+    Serial << "Time is 15 min" << endl;
+  } else if (!digitalRead(time3Pin)) {
+    Serial << "Time is 20 min" << endl;
+  }
 
   runTheGame();
 

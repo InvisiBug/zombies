@@ -84,25 +84,6 @@ void endGameLobby() {
 
   gameFinished = true;
 
-  // Cylon animation here
-  if (postGameLobbyCounter >= 0) {
-    currentLED[postGameLobbyCounter] = getTeamColour();
-    postGameLobbyCounter--;
-
-    FastLED.show();
-    delay(100);
-  } else {
-    endGameLobbyDirection = true;
-    postGameLobbyCounter = totalLEDs - 1;
-  }
-
-  // write a function to mve an led back and forward
-  if (endGameLobbyDirection) {
-    currentLED[postGameLobbyCounter] = getTeamColour();
-    postGameLobbyCounter--;
-
-    setAllLEDs(0x000000);
-    // delay(1000);
-    setAllLEDs(getTeamColour());
-    // delay(1500);
-  }
+  // ! this introduces flicker, dunno why yet
+  fire.run(15, 120, 20, true);
+}

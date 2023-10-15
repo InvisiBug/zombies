@@ -24,7 +24,7 @@ void startWiFi() {
 
   delay(100);  // Added to try and prevent crashing (Remove if not possible)
 
-  // WiFi.mode(WIFI_AP_STA);  // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
+  // WiFi.mode(WIFI_AP_STA); // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
   WiFi.softAP("Zombies", NULL, wifiChannel);  //! Not sure about this
 
   switch (team) {
@@ -72,11 +72,11 @@ void countDownAnimation() {
 int getTeamColour() {
   switch (team) {
     case human:
-      Serial << "Human Colour" << endl;
+      // Serial << "Human Colour" << endl;
       return humanColour;
       break;
     case zombie:
-      Serial << "Zombie Colour" << endl;
+      // Serial << "Zombie Colour" << endl;
       return zombieColour;
       break;
   }
