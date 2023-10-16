@@ -32,6 +32,7 @@ void topButtonClicked() {
   }
 
   if (gameRunning) {
+    Serial << "Show time left" << endl;
     showTimeLeft();
   }
 
@@ -57,6 +58,7 @@ void bottomButtonClicked() {
   }
 
   if (gameRunning) {
+    Serial << "Show time left" << endl;
     showTimeLeft();
   }
 

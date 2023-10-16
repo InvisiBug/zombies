@@ -84,15 +84,28 @@ int getTeamColour() {
 }
 
 void showTimeLeft() {
-  int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);
+  // int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);
+  int indicatorLevel = map(gameTimeLeft, 0, (totalGameTime * 60 * 1000) - 100, 0, totalLEDs);
 
-  showDistance(indicatorLevel, timeColour);
+  Serial << "Indicator Level: " << indicatorLevel << endl;
+
+  // showDistance(indicatorLevel, timeColour);
+  for (int i = 0; i < indicatorLevel; i++) {
+    currentLED[i] = timeColour;
+  }
+  FastLED.show();
+
+  for (int i = totalLEDs; i > indicatorLevel; i--) {
+    currentLED[i] = 0x000000;
+  }
+  FastLED.show();
   delay(500);
 
   allOff();
 }
 
-void showDistance(int indicatorLevel, int colour) {
+void showDistance(int currentDistance, int colour) {
+  int indicatorLevel = map(currentDistance, maxDistance, bitingDistance, 0, totalLEDs);
   indicatorLevel = constrain(indicatorLevel, 0, totalLEDs);  // prevents crashing due to trying to show more than there actually are
 
   for (int i = 0; i < indicatorLevel; i++) {
@@ -125,7 +138,7 @@ void allOff() {
 //
 ////////////////////////////////////////////////////////////////////////
 bool gameTimeRemaining() {
-  gameTimeLeft = totalGameTime - (millis() - timeGameStarted);
+  gameTimeLeft = (totalGameTime * 60 * 1000) - (millis() - timeGameStarted);
 
   // printTimeRemaining(gameTimeLeft);
 

@@ -83,7 +83,8 @@ void endGameLobby() {
   Serial << "End Game Lobby" << endl;
 
   gameFinished = true;
+  WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
 
   // ! this introduces flicker, dunno why yet
-  fire.run(15, 120, 20, true);
+  // fire.run(15, 120, 20, true);
 }

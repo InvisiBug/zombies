@@ -35,31 +35,25 @@
 //  ######  ###### #      # #    # #   #   #  ####  #    #  ####
 //
 ////////////////////////////////////////////////////////////////////////
-#define on LOW
-#define off HIGH
 
 #define topButtonPin 13     // D7
-#define bottomButtonPin 14  // D5
-#define ledPin 12           // D6
-#define time1Pin 2          // D4
-#define time2Pin 4          // D2
-#define time3Pin 5          // D1
+#define bottomButtonPin 12  // D6
+#define ledPin 14           // D5
+
+#define time1Pin 16  // D0
+#define time2Pin 4   // D2
+#define time3Pin 2   // D4
 
 #define totalLEDs 8
 #define wifiChannel 10
 
-#define totalGameTime (1 * 60 * 1000)
+// #define totalGameTime (1 * 60 * 1000)  // * Need to make adjustable
 #define lobbyCountdownTime (5 * 1000)
 
 #define humanColour 0x0000ff
 #define zombieColour 0x00ff00
 #define randomColour 0x352465
 #define timeColour 0xacacac
-
-#define zombiePin 16  // D0
-#define humanPin 14   // D5
-#define gamePin 5     // D1
-#define ambientPin 4  // D2
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -112,7 +106,10 @@ int timeTillTurned = 2 * 1000;
 // Timer Variables
 int timeNow = 0;
 int timeCaught = 0;
-int gameTimeLeft = totalGameTime;
+
+int totalGameTime = 0;
+int gameTimeLeft = 0;
+
 int timeGameStarted = 0;
 int lobbyCountdownTimeRemaining = lobbyCountdownTime;
 
@@ -150,12 +147,27 @@ void setup() {
   Serial.begin(9600);
   Serial << "Zombie Game" << endl;
 
+  // if (!digitalRead(time1Pin)) {
+  //   Serial << "Time is 10 min" << endl;
+  //   totalGameTime = 1;
+  // } else if (!digitalRead(time2Pin)) {
+  //   Serial << "Time is 15 min" << endl;
+  //   totalGameTime = 15;
+  // } else if (!digitalRead(time3Pin)) {
+  //   Serial << "Time is 20 min" << endl;
+  //   totalGameTime = 10;
+  // }
+
+  totalGameTime = 1;
+
+  gameTimeLeft = totalGameTime;
+
   // Pin setups
   pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH);
   pinMode(time1Pin, INPUT_PULLUP);
   pinMode(time2Pin, INPUT_PULLUP);
   pinMode(time3Pin, INPUT_PULLUP);
-  digitalWrite(LED_BUILTIN, off);
 
   // LEDs
   FastLED.addLeds<WS2811, ledPin, GRB>(currentLED, totalLEDs);
@@ -210,14 +222,6 @@ void loop(void) {
   // Serial.println();
 
   // delay(5000);
-
-  if (!digitalRead(time1Pin)) {
-    Serial << "Time is 10 min" << endl;
-  } else if (!digitalRead(time2Pin)) {
-    Serial << "Time is 15 min" << endl;
-  } else if (!digitalRead(time3Pin)) {
-    Serial << "Time is 20 min" << endl;
-  }
 
   runTheGame();
 

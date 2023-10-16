@@ -19,13 +19,7 @@ void game() {
       if (WiFi.SSID(i) == "Zombie") {
         // Zombie close
         currentDistance = abs(WiFi.RSSI(i));
-        int indicatorLevel = map(currentDistance, maxDistance, bitingDistance, 0, totalLEDs);
-        indicatorLevel = constrain(indicatorLevel, 0, totalLEDs);  // prevents crashing due to trying to show more than there actually are
-
-        showDistance(indicatorLevel, humanColour);
-
-        Serial << "Current Distance: " << currentDistance << " "
-               << "Indicator Level: " << indicatorLevel << endl;
+        showDistance(currentDistance, humanColour);
       }
     }
 
@@ -46,13 +40,7 @@ void game() {
       if (WiFi.SSID(i) == "Human") {
         // Human close
         currentDistance = abs(WiFi.RSSI(i));
-        int indicatorLevel = map(currentDistance, maxDistance, bitingDistance, 0, totalLEDs);
-        indicatorLevel = constrain(indicatorLevel, 0, totalLEDs);  // prevents crashing due to trying to show more than there actually are
-
-        showDistance(indicatorLevel, zombieColour);
-
-        Serial << "Current Distance: " << currentDistance << " "
-               << "Indicator Level: " << indicatorLevel << endl;
+        showDistance(currentDistance, zombieColour);
       }
 
       if (currentDistance >= maxDistance) {
@@ -76,6 +64,13 @@ void checkIfBitten() {
     // Turned
     if (timeNow >= timeTillTurned) {
       Serial << "Turned" << endl;
+
+      for (int i = 0; i < 5; i++) {
+        setAllLEDs(zombieColour);
+        delay(500);
+        allOff();
+        delay(500);
+      }
 
       team = zombie;
       startWiFi();
