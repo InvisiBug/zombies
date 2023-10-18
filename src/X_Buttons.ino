@@ -27,17 +27,29 @@ void tickButtons() {
 void topButtonClicked() {
   Serial << "Top Button Clicked" << endl;
 
-  if (inLobby) {
-    team = !team;
-  }
+  // if (inLobby) {
+  //   team = !team;
+  // }
 
-  if (gameRunning) {
-    Serial << "Show time left" << endl;
-    showTimeLeft();
-  }
+  // if (gameRunning) {
+  //   Serial << "Show time left" << endl;
+  //   showTimeLeft();
+  // }
 
-  if (gameFinished) {
-    resetGame();
+  // if (gameFinished) {
+  //   resetGame();
+  // }
+
+  switch (gameState) {
+    case lobby:
+      team = !team;
+      break;
+    case game:
+      showTimeLeft();
+      break;
+    case postGame:
+      resetGame();
+      break;
   }
 }
 
@@ -51,19 +63,33 @@ void topButtonHeld() {
 void bottomButtonClicked() {
   Serial << "Bottom Button Clicked" << endl;
 
-  if (inLobby) {
-    inLobby = false;
-    timeLobbyCountdownStarted = millis();
-    startWiFi();
-  }
+  // if (inLobby) {
+  //   inLobby = false;
+  //   timeLobbyCountdownStarted = millis();
+  //   startWiFi();
+  // }
 
-  if (gameRunning) {
-    Serial << "Show time left" << endl;
-    showTimeLeft();
-  }
+  // if (gameRunning) {
+  //   Serial << "Show time left" << endl;
+  //   showTimeLeft();
+  // }
 
-  if (gameFinished) {
-    resetGame();
+  // if (gameFinished) {
+  //   resetGame();
+  // }
+
+  switch (gameState) {
+    case lobby:
+      timeLobbyCountdownStarted = millis();
+      startWiFi();
+      gameState = countdown;
+      break;
+    case game:
+      showTimeLeft();
+      break;
+    case postGame:
+      resetGame();
+      break;
   }
 }
 

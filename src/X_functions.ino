@@ -32,6 +32,7 @@ void startWiFi() {
       Serial << "Player is a human" << endl;
       WiFi.softAP("Human", NULL, wifiChannel);
       break;
+
     case zombie:
       Serial << "Player is a zombie" << endl;
       WiFi.softAP("Zombie", NULL, wifiChannel);
@@ -58,8 +59,6 @@ void setAllLEDs(int colour) {
 }
 
 void countDownAnimation() {
-  // Add random selection
-  // Set all LEDs to team colour
   setAllLEDs(getTeamColour());
 
   delay(150);
@@ -75,6 +74,7 @@ int getTeamColour() {
       // Serial << "Human Colour" << endl;
       return humanColour;
       break;
+
     case zombie:
       // Serial << "Zombie Colour" << endl;
       return zombieColour;
@@ -187,16 +187,13 @@ void printTimeRemaining(int time) {
 void resetGame() {
   allOff();
 
-  gameTimeLeft = totalGameTime;  // 45 mins
+  gameState = lobby;
+
+  gameTimeLeft = totalGameTime;
 
   timeGameStarted = 0;
-  timeCountDownStarted = 0;
   lobbyCountdownTimeRemaining = lobbyCountdownTime;
 
-  gameRunning = false;
-
-  gameFinished = false;
-  inLobby = true;
   preGameLobbyCounter = totalLEDs - 1;
   postGameLobbyCounter = totalLEDs - 1;
 }

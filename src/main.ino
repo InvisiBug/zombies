@@ -93,7 +93,14 @@ enum Team {
   zombie
 };
 
-char* mode = "Game";
+enum Gamestate {
+  lobby,
+  countdown,
+  game,
+  postGame
+};
+
+// char* mode = "Game";
 
 int team = 0;
 
@@ -114,15 +121,8 @@ int timeGameStarted = 0;
 int lobbyCountdownTimeRemaining = lobbyCountdownTime;
 
 //! State machine variables (think very carefully before messing around with these, they can and will break everything)
-bool gameFinished,
-    gameRunning,
-    beenCaught,
-    started,
-    inGame = false;
+bool beenCaught, lobbyCountdownRunning = false;
 
-bool inLobby = true;
-bool lobbyCountdownRunning = false;
-int timeCountDownStarted = 0;
 int timeLobbyCountdownStarted = 0;
 
 int currentDistance = 0;
@@ -130,7 +130,7 @@ int currentDistance = 0;
 int preGameLobbyCounter = totalLEDs - 1;  // leds are wired up counter clockwise
 int postGameLobbyCounter = totalLEDs - 1;
 
-bool endGameLobbyDirection = 0;
+int gameState = lobby;
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -203,6 +203,28 @@ void setup() {
 void loop(void) {
   tickButtons();
 
+  switch (gameState) {
+    case lobby:
+      preGameLobby();
+      break;
+
+    case countdown:
+      checkCountDownTime();
+      break;
+
+    case game:
+      if (gameTimeRemaining()) {
+        runGame();  // Still time remaining, play game
+      } else {
+        gameState = postGame;
+      }
+      break;
+
+    case postGame:
+      endGameLobby();
+      break;
+  }
+
   // Serial << digitalRead(zombiePin) << endl;
 
   // Serial <<  "Zombie: "   << digitalRead(zombiePin);
@@ -223,7 +245,7 @@ void loop(void) {
 
   // delay(5000);
 
-  runTheGame();
+  // runTheGame();
 
   // for (int i = 0; i < totalLEDs; i++) {
   //   currentLED[i] = 0xff0000;

@@ -9,7 +9,7 @@
 //   #####  #    # #    # ######
 //
 ////////////////////////////////////////////////////////////////////////
-void game() {
+void runGame() {
   int n = WiFi.scanNetworks(false, false, wifiChannel);
 
   if (team == human) {
@@ -53,6 +53,7 @@ void game() {
 void checkIfBitten() {
   // Getting Bitten
   if (currentDistance < bitingDistance) {
+    // Been caught so start a timer
     if (!beenCaught) {
       timeCaught = millis();
       beenCaught = true;

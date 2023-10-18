@@ -9,23 +9,6 @@
 //   #####  #    # #    # ######    #######  ####   ####  #  ####
 //
 ////////////////////////////////////////////////////////////////////////
-void runTheGame() {
-  // Serial << "Setup Game" << endl;
-  if (!gameRunning) {
-    if (inLobby) {
-      preGameLobby();  // Players not ready, pre game lobby
-    } else {
-      lobbyCountdown();  // Players ready, begin countdown
-    }
-  } else {
-    if (gameTimeRemaining()) {
-      game();  // Still time remaining, play game
-    } else {
-      endGameLobby();  // Game finished, final lobby
-    }
-  }
-}
-
 // Pre start countdown
 void lobbyCountdown() {
   Serial << "Lobby Countdown" << endl;
@@ -42,7 +25,7 @@ void checkCountDownTime() {
   // Serial << "Check Count Down Time" << endl;
   if (lobbyCountdownFinished()) {
     // runGame();
-    gameRunning = true;
+    gameState = game;
     timeGameStarted = millis();
   } else {
     countDownAnimation();  // count down animation;
@@ -82,9 +65,13 @@ void preGameLobby() {
 void endGameLobby() {
   Serial << "End Game Lobby" << endl;
 
-  gameFinished = true;
   WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
 
-  // ! this introduces flicker, dunno why yet
+  // ! this introduces flicker, possible due to led timings
   // fire.run(15, 120, 20, true);
+
+  for (int i = 0; i < totalLEDs; i++) {
+    currentLED[i] = 0xffff00;
+  }
+  FastLED.show();
 }
