@@ -71,7 +71,7 @@ void endGameLobby() {
   // fire.run(15, 120, 20, true);
 
   for (int i = 0; i < totalLEDs; i++) {
-    currentLED[i] = 0xffff00;
+    currentLED[i] = 0xff0000;
   }
   FastLED.show();
 }

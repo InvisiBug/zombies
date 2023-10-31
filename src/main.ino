@@ -36,22 +36,22 @@
 //
 ////////////////////////////////////////////////////////////////////////
 
-#define topButtonPin 13     // D7
-#define bottomButtonPin 12  // D6
+#define topButtonPin 12     // D6
+#define bottomButtonPin 13  // D7
 #define ledPin 14           // D5
 
-#define time1Pin 16  // D0
-#define time2Pin 4   // D2
-#define time3Pin 2   // D4
+#define time1Pin 5
+#define time2Pin 4
+#define time3Pin 3
 
-#define totalLEDs 8
+#define totalLEDs 7
 #define wifiChannel 10
 
 // #define totalGameTime (1 * 60 * 1000)  // * Need to make adjustable
 #define lobbyCountdownTime (5 * 1000)
 
 #define humanColour 0x0000ff
-#define zombieColour 0x00ff00
+#define zombieColour 0x008800
 #define randomColour 0x352465
 #define timeColour 0xacacac
 
@@ -105,16 +105,16 @@ enum Gamestate {
 int team = 0;
 
 // Options
-int LEDBrightness = 10;  // As a percentage (saved as a dynamic variable to let us change later)
-int bitingDistance = 30;
-int maxDistance = 50;
-int timeTillTurned = 2 * 1000;
+int LEDBrightness = 10;   // As a percentage (saved as a dynamic variable to let us change later)
+int bitingDistance = 40;  //? Set to 40 for actual game
+int maxDistance = 70;
+int timeTillTurned = 1.5 * 1000;
 
 // Timer Variables
 int timeNow = 0;
 int timeCaught = 0;
 
-int totalGameTime = 0;
+int totalGameTime = 10;
 int gameTimeLeft = 0;
 
 int timeGameStarted = 0;
@@ -130,7 +130,12 @@ int currentDistance = 0;
 int preGameLobbyCounter = totalLEDs - 1;  // leds are wired up counter clockwise
 int postGameLobbyCounter = totalLEDs - 1;
 
-int gameState = lobby;
+int gameState = lobby;  //? Set to lobby for actual game
+
+// Set the buffer to biting distance + 1 to handle not finding the zombie network
+int buffer[5] = {bitingDistance + 1, bitingDistance + 1, bitingDistance + 1, bitingDistance + 1, bitingDistance + 1};
+int bufferPos = 0;
+int bufferAverage = 0;
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -147,21 +152,24 @@ void setup() {
   Serial.begin(9600);
   Serial << "Zombie Game" << endl;
 
+  //? Uncomment to set time based on header pins
   // if (!digitalRead(time1Pin)) {
   //   Serial << "Time is 10 min" << endl;
-  //   totalGameTime = 1;
+  //   totalGameTime = 10;
+  //   setAllLEDs(0xff0000);
   // } else if (!digitalRead(time2Pin)) {
   //   Serial << "Time is 15 min" << endl;
+  //   setAllLEDs(0x00ff00);
   //   totalGameTime = 15;
   // } else if (!digitalRead(time3Pin)) {
   //   Serial << "Time is 20 min" << endl;
-  //   totalGameTime = 10;
+  //   setAllLEDs(0x0000ff);
+  //   totalGameTime = 20;
   // }
-
-  totalGameTime = 1;
 
   gameTimeLeft = totalGameTime;
 
+  /////////////
   // Pin setups
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, HIGH);
@@ -169,6 +177,7 @@ void setup() {
   pinMode(time2Pin, INPUT_PULLUP);
   pinMode(time3Pin, INPUT_PULLUP);
 
+  ///////
   // LEDs
   FastLED.addLeds<WS2811, ledPin, GRB>(currentLED, totalLEDs);
   FastLED.setBrightness(LEDBrightness * 2.55);
@@ -182,9 +191,9 @@ void setup() {
   // allOff();
   // WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
 
-  // delay(100);  // Added to try and prevent crashing (Remove if not possible)
+  // // // delay(100);  // Added to try and prevent crashing (Remove if not possible)
 
-  // // WiFi.mode(WIFI_AP_STA);  // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
+  // // // // WiFi.mode(WIFI_AP_STA);  // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
 
   // WiFi.softAP("Zombie", NULL, wifiChannel);
 }
