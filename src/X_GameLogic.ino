@@ -24,7 +24,6 @@ void lobbyCountdown() {
 void checkCountDownTime() {
   // Serial << "Check Count Down Time" << endl;
   if (lobbyCountdownFinished()) {
-    // runGame();
     gameState = game;
     timeGameStarted = millis();
   } else {
@@ -45,20 +44,19 @@ void checkCountDownTime() {
 ////////////////////////////////////////////////////////////////////////111
 void preGameLobby() {
   // Serial << "Pre Game Lobby" << endl;
-  // Set team colour
 
   // Set all LEDs to team colour
   setAllLEDs(getTeamColour());
 
   // Make one blank led move along the strip
-  if (preGameLobbyCounter >= 0) {
+  if (preGameLobbyCounter < totalLEDs - 1) {
     currentLED[preGameLobbyCounter] = 0x000000;
-    preGameLobbyCounter--;
+    preGameLobbyCounter++;
 
     FastLED.show();
     delay(100);
   } else {
-    preGameLobbyCounter = totalLEDs - 1;
+    preGameLobbyCounter = 0;
   }
 }
 

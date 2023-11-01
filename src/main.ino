@@ -22,8 +22,6 @@
 #include <Streaming.h>
 #include <WiFiClient.h>
 
-#include "effects/Fire.h"
-
 ////////////////////////////////////////////////////////////////////////
 //
 //  ######
@@ -74,8 +72,6 @@ OneButton topButton(topButtonPin, true);
 OneButton bottomButton(bottomButtonPin, true);
 
 // Effects
-// Crisscross crissCross(totalLEDs, currentLED, 20);
-Fire fire(totalLEDs, currentLED);
 
 ////////////////////////////////////////////////////////////////////////
 //
