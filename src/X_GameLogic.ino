@@ -42,7 +42,7 @@ void checkCountDownTime() {
 // #       #    # #    # #    # # #      #    #
 // #######  ####  #####  #####  # ######  ####
 //
-////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////111
 void preGameLobby() {
   // Serial << "Pre Game Lobby" << endl;
   // Set team colour
@@ -66,9 +66,6 @@ void endGameLobby() {
   Serial << "End Game Lobby" << endl;
 
   WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
-
-  // ! this introduces flicker, possible due to led timings
-  // fire.run(15, 120, 20, true);
 
   for (int i = 0; i < totalLEDs; i++) {
     currentLED[i] = 0xff0000;
