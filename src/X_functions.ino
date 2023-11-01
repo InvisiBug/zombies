@@ -25,17 +25,25 @@ void startWiFi() {
   delay(100);  // Added to try and prevent crashing (Remove if not possible)
 
   // WiFi.mode(WIFI_AP_STA); // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
-  WiFi.softAP("Zombies", NULL, wifiChannel);  //! Not sure about this
+  WiFi.softAP("Zombies", NULL, wifiChannel);  //* Using a specific wifi channel, makes scanning later much faster
 
   switch (team) {
     case human:
       Serial << "Player is a human" << endl;
-      WiFi.softAP("Human", NULL, wifiChannel);
+
+      char humanssid[25];
+      snprintf(humanssid, 25, "Human-%06X", ESP.getChipId());
+      WiFi.softAP(humanssid, NULL, wifiChannel);
+
       break;
 
     case zombie:
+      // Create a zombie wifi network using the chip id, can be used later to track individual zombies
       Serial << "Player is a zombie" << endl;
-      WiFi.softAP("Zombie", NULL, wifiChannel);
+
+      char zombiessid[25];
+      snprintf(zombiessid, 25, "Zombie-%06X", ESP.getChipId());
+      WiFi.softAP(zombiessid, NULL, wifiChannel);
       break;
   }
 }

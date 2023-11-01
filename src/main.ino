@@ -48,7 +48,7 @@
 #define wifiChannel 10
 
 // #define totalGameTime (1 * 60 * 1000)  // * Need to make adjustable
-#define lobbyCountdownTime (5 * 1000)
+#define lobbyCountdownTime (60 * 1000)
 
 #define humanColour 0x0000ff
 #define zombieColour 0x008800
@@ -105,8 +105,8 @@ enum Gamestate {
 int team = 0;
 
 // Options
-int LEDBrightness = 10;   // As a percentage (saved as a dynamic variable to let us change later)
-int bitingDistance = 40;  //? Set to 40 for actual game
+int LEDBrightness = 20;   // As a percentage (saved as a dynamic variable to let us change later)
+int bitingDistance = 30;  //? Set to 40 for actual game
 int maxDistance = 70;
 int timeTillTurned = 1.5 * 1000;
 
@@ -119,11 +119,10 @@ int gameTimeLeft = 0;
 
 int timeGameStarted = 0;
 int lobbyCountdownTimeRemaining = lobbyCountdownTime;
+int timeLobbyCountdownStarted = 0;
 
 //! State machine variables (think very carefully before messing around with these, they can and will break everything)
 bool beenCaught, lobbyCountdownRunning = false;
-
-int timeLobbyCountdownStarted = 0;
 
 int currentDistance = 0;
 
@@ -196,6 +195,15 @@ void setup() {
   // // // // WiFi.mode(WIFI_AP_STA);  // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
 
   // WiFi.softAP("Zombie", NULL, wifiChannel);
+
+  // char APssid[25];
+
+  // uint32_t chipid = ESP.getChipId();
+  // snprintf(APssid, 25, "Zombie-%06X", chipid);
+  // Serial.print("APssid:");
+  // Serial.println(APssid);
+
+  // WiFi.softAP(APssid, NULL, wifiChannel);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -223,7 +231,7 @@ void loop(void) {
 
     case game:
       if (gameTimeRemaining()) {
-        runGame();  // Still time remaining, play game
+        runGameWithoutBuffer();  // Still time remaining, play game
       } else {
         gameState = postGame;
       }
@@ -233,6 +241,23 @@ void loop(void) {
       endGameLobby();
       break;
   }
+
+  // Serial.print("Scan start ... ");
+  // int n = WiFi.scanNetworks();
+  // Serial.print(n);
+  // Serial.println(" network(s) found");
+  // for (int i = 0; i < n; i++) {
+  //   String ssid = WiFi.SSID(i);
+  //   String id = ssid.substring(7, 13);
+
+  //   if (ssid.indexOf("Zombie") != -1) {
+  //     Serial << "Zombie found: " << id << endl;
+  //   }
+  //   Serial << ssid << " " << abs(WiFi.RSSI(i)) << endl;
+  // }
+  // Serial.println();
+
+  // delay(5000);
 
   // Serial << digitalRead(zombiePin) << endl;
 
