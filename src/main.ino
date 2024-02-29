@@ -102,8 +102,8 @@ int team = 0;
 
 // Options
 int LEDBrightness = 20;   // As a percentage (saved as a dynamic variable to let us change later)
-int bitingDistance = 30;  //? Set to 40 for actual game
-int maxDistance = 70;
+int bitingDistance = 50;  //? Set to 40 for actual game
+int maxDistance = 100;
 int timeTillTurned = 1.5 * 1000;
 
 // Timer Variables

@@ -13,6 +13,7 @@ void runGameWithoutBuffer() {
   int n = WiFi.scanNetworks(false, false, wifiChannel);
 
   if (team == human) {
+    //* Maybe make it only display the closest zombie
     currentDistance = maxDistance;
 
     for (int i = 0; i < n; i++) {
