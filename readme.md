@@ -1,3 +1,8 @@
+## New notes
+Game states (lobby, countdown, game and post game) live in the loop
+the buttons always do stuff depending on the current game state (Start game, change team, show time left)
+
+
 # Zombies
 
 Game states
@@ -21,3 +26,5 @@ When in proximity to opponent the distance is shown on the LED strip
 When human is captured the LEDs flash the zombie colour then go out, the players device is now looking for the opponent
 
 When the game ends the leds turn red
+
+

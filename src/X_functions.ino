@@ -25,8 +25,12 @@ void startWiFi() {
   delay(100);  // Added to try and prevent crashing (Remove if not possible)
 
   // WiFi.mode(WIFI_AP_STA); // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
-  WiFi.softAP("Zombies", NULL, wifiChannel);  //* Using a specific wifi channel, makes scanning later much faster
+  // WiFi.softAP("Zombies", NULL, wifiChannel);  //* Using a specific wifi channel, makes scanning later much faster
 
+  /*
+    Create the appropriat network for the team, adding the chip id on the end
+    can be used for tracking players at a later date
+  */
   switch (team) {
     case human:
       Serial << "Player is a human" << endl;
@@ -59,6 +63,7 @@ void startWiFi() {
 // ####### ####### ######   ####
 //
 ////////////////////////////////////////////////////////////////////////
+// Sometimes doesnt actually set all LEDs, dunno why
 void setAllLEDs(int colour) {
   for (int i = 0; i < totalLEDs; i++) {
     currentLED[i] = colour;
@@ -204,4 +209,11 @@ void resetGame() {
 
   preGameLobbyCounter = totalLEDs - 1;
   postGameLobbyCounter = totalLEDs - 1;
+}
+
+void LEDTest() {
+  setAllLEDs(0x00aa00);
+  delay(250);
+  setAllLEDs(0x000000);
+  delay(250);
 }

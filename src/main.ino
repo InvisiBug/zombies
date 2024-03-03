@@ -1,10 +1,4 @@
 ////////////////////////////////////////////////////////////////////////
-//  Matthew Kavanagh
-//
-//  Zombies
-//  27/02/2019
-//  *********
-////////////////////////////////////////////////////////////////////////
 //
 //  ###
 //   #  #    #  ####  #      #    # #####  ######  ####
@@ -46,7 +40,7 @@
 #define wifiChannel 10
 
 // #define totalGameTime (1 * 60 * 1000)  // * Need to make adjustable
-#define lobbyCountdownTime (60 * 1000)
+// #define lobbyCountdownTime (60 * 1000)
 
 #define humanColour 0x0000ff
 #define zombieColour 0x008800
@@ -89,16 +83,24 @@ enum Team {
   zombie
 };
 
+enum Mode {
+  game,
+  broadcast,
+  dev
+};
+
 enum Gamestate {
   lobby,
   countdown,
-  game,
+  runGame,
   postGame
 };
 
 // char* mode = "Game";
 
-int team = 0;
+int gameState = lobby;  //? Set to lobby for actual game
+int team = human;
+int mode = broadcast;
 
 // Options
 int LEDBrightness = 20;   // As a percentage (saved as a dynamic variable to let us change later)
@@ -110,9 +112,10 @@ int timeTillTurned = 1.5 * 1000;
 int timeNow = 0;
 int timeCaught = 0;
 
-int totalGameTime = 10;
+int totalGameTime = 10;  // in mins
 int gameTimeLeft = 0;
 
+int lobbyCountdownTime = (30 * 1000);
 int timeGameStarted = 0;
 int lobbyCountdownTimeRemaining = lobbyCountdownTime;
 int timeLobbyCountdownStarted = 0;
@@ -124,8 +127,6 @@ int currentDistance = 0;
 
 int preGameLobbyCounter = totalLEDs - 1;  // leds are wired up counter clockwise
 int postGameLobbyCounter = totalLEDs - 1;
-
-int gameState = lobby;  //? Set to lobby for actual game
 
 // Set the buffer to biting distance + 1 to handle not finding the zombie network
 int buffer[5] = {bitingDistance + 1, bitingDistance + 1, bitingDistance + 1, bitingDistance + 1, bitingDistance + 1};
@@ -146,21 +147,6 @@ int bufferAverage = 0;
 void setup() {
   Serial.begin(9600);
   Serial << "Zombie Game" << endl;
-
-  //? Uncomment to set time based on header pins
-  // if (!digitalRead(time1Pin)) {
-  //   Serial << "Time is 10 min" << endl;
-  //   totalGameTime = 10;
-  //   setAllLEDs(0xff0000);
-  // } else if (!digitalRead(time2Pin)) {
-  //   Serial << "Time is 15 min" << endl;
-  //   setAllLEDs(0x00ff00);
-  //   totalGameTime = 15;
-  // } else if (!digitalRead(time3Pin)) {
-  //   Serial << "Time is 20 min" << endl;
-  //   setAllLEDs(0x0000ff);
-  //   totalGameTime = 20;
-  // }
 
   gameTimeLeft = totalGameTime;
 
@@ -183,23 +169,9 @@ void setup() {
 
   allOff();
 
-  // allOff();
-  // WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
+  startWiFi();
 
-  // // // delay(100);  // Added to try and prevent crashing (Remove if not possible)
-
-  // // // // WiFi.mode(WIFI_AP_STA);  // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
-
-  // WiFi.softAP("Zombie", NULL, wifiChannel);
-
-  // char APssid[25];
-
-  // uint32_t chipid = ESP.getChipId();
-  // snprintf(APssid, 25, "Zombie-%06X", chipid);
-  // Serial.print("APssid:");
-  // Serial.println(APssid);
-
-  // WiFi.softAP(APssid, NULL, wifiChannel);
+  Serial << mode << endl;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -214,71 +186,113 @@ void setup() {
 //
 ///////////////////////////////////////////////////////////////////////
 void loop(void) {
+  // runGameWithoutBuffer();
   tickButtons();
 
-  switch (gameState) {
-    case lobby:
-      preGameLobby();
-      break;
+  // LEDTest();
 
-    case countdown:
-      checkCountDownTime();
-      break;
-
+  switch (mode) {
     case game:
-      if (gameTimeRemaining()) {
-        runGameWithoutBuffer();  // Still time remaining, play game
-      } else {
-        gameState = postGame;
+      switch (gameState) {
+        case lobby:
+          preGameLobby();
+          break;
+
+        case countdown:
+          checkCountDownTime();
+          break;
+
+        case runGame:
+          if (gameTimeRemaining()) {
+            runGameWithoutBuffer();  // Still time remaining, play game
+          } else {
+            gameState = postGame;
+          }
+          break;
+
+        case postGame:
+          endGameLobby();
+          break;
       }
       break;
 
-    case postGame:
-      endGameLobby();
+    case broadcast:
+
+      int n = WiFi.scanNetworks(false, false, wifiChannel);
+
+      if (team == human) {
+        //* Maybe make it only display the closest zombie
+        currentDistance = maxDistance;
+        // Serial << "human" << endl;
+
+        for (int i = 0; i < n; i++) {
+          if (WiFi.SSID(i).indexOf("Zombie") != -1) {
+            int currentDistance = abs(WiFi.RSSI(i));
+
+            // Serial << currentDistance << endl;  // Print out distance
+
+            showDistance(currentDistance, humanColour);
+          }
+        }
+      } else if (team == zombie) {
+        //* Maybe make it only display the closest zombie
+        currentDistance = maxDistance;
+        // Serial << "zombie" << endl;
+
+        for (int i = 0; i < n; i++) {
+          if (WiFi.SSID(i).indexOf("Human") != -1) {
+            int currentDistance = abs(WiFi.RSSI(i));
+
+            // Serial << currentDistance << endl;  // Print out distance
+
+            showDistance(currentDistance, zombieColour);
+          }
+        }
+      }
       break;
   }
-
-  // Serial.print("Scan start ... ");
-  // int n = WiFi.scanNetworks();
-  // Serial.print(n);
-  // Serial.println(" network(s) found");
-  // for (int i = 0; i < n; i++) {
-  //   String ssid = WiFi.SSID(i);
-  //   String id = ssid.substring(7, 13);
-
-  //   if (ssid.indexOf("Zombie") != -1) {
-  //     Serial << "Zombie found: " << id << endl;
-  //   }
-  //   Serial << ssid << " " << abs(WiFi.RSSI(i)) << endl;
-  // }
-  // Serial.println();
-
-  // delay(5000);
-
-  // Serial << digitalRead(zombiePin) << endl;
-
-  // Serial <<  "Zombie: "   << digitalRead(zombiePin);
-  // Serial <<  " Human: "   << digitalRead(humanPin);
-  // Serial <<  " Game: "    << digitalRead(gamePin);
-  // Serial <<  " Ambient: " << digitalRead(ambientPin) << endl;
-
-  // delay(100);
-
-  // Serial.print("Scan start ... ");
-  // int n = WiFi.scanNetworks();
-  // Serial.print(n);
-  // Serial.println(" network(s) found");
-  // for (int i = 0; i < n; i++) {
-  //   Serial.println(WiFi.SSID(i));
-  // }
-  // Serial.println();
-
-  // delay(5000);
-
-  // runTheGame();
-
-  // for (int i = 0; i < totalLEDs; i++) {
-  //   currentLED[i] = 0xff0000;
-  // }
-  // FastLED.show();
 }
+
+// Serial.print("Scan start ... ");
+// int n = WiFi.scanNetworks();
+// Serial.print(n);
+// Serial.println(" network(s) found");
+// for (int i = 0; i < n; i++) {
+//   String ssid = WiFi.SSID(i);
+//   String id = ssid.substring(7, 13);
+
+//   if (ssid.indexOf("Zombie") != -1) {
+//     Serial << "Zombie found: " << id << endl;
+//   }
+//   Serial << ssid << " " << abs(WiFi.RSSI(i)) << endl;
+// }
+// Serial.println();
+
+// delay(5000);
+
+// Serial << digitalRead(zombiePin) << endl;
+
+// Serial <<  "Zombie: "   << digitalRead(zombiePin);
+// Serial <<  " Human: "   << digitalRead(humanPin);
+// Serial <<  " Game: "    << digitalRead(gamePin);
+// Serial <<  " Ambient: " << digitalRead(ambientPin) << endl;
+
+// delay(100);
+
+// Serial.print("Scan start ... ");
+// int n = WiFi.scanNetworks();
+// Serial.print(n);
+// Serial.println(" network(s) found");
+// for (int i = 0; i < n; i++) {
+//   Serial.println(WiFi.SSID(i));
+// }
+// Serial.println();
+
+// delay(5000);
+
+// runTheGame();
+
+// for (int i = 0; i < totalLEDs; i++) {
+//   currentLED[i] = 0xff0000;
+// }
+// FastLED.show();

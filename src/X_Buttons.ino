@@ -27,15 +27,24 @@ void tickButtons() {
 void topButtonClicked() {
   Serial << "Top Button Clicked" << endl;
 
-  switch (gameState) {
-    case lobby:
-      team = !team;
-      break;
+  switch (mode) {
     case game:
-      showTimeLeft();
+      switch (gameState) {
+        case lobby:
+          team = !team;
+          break;
+        case runGame:
+          showTimeLeft();
+          break;
+        case postGame:
+          resetGame();
+          break;
+      }
       break;
-    case postGame:
-      resetGame();
+
+    case broadcast:
+      team = !team;
+      startWiFi();
       break;
   }
 }
@@ -50,17 +59,28 @@ void topButtonHeld() {
 void bottomButtonClicked() {
   Serial << "Bottom Button Clicked" << endl;
 
-  switch (gameState) {
-    case lobby:
-      timeLobbyCountdownStarted = millis();
-      startWiFi();
-      gameState = countdown;
-      break;
+  switch (mode) {
     case game:
-      showTimeLeft();
+      switch (gameState) {
+        case lobby:
+          timeLobbyCountdownStarted = millis();
+          startWiFi();
+          gameState = countdown;
+          break;
+        case runGame:
+          showTimeLeft();
+          break;
+        case postGame:
+          resetGame();
+          break;
+      }
       break;
-    case postGame:
-      resetGame();
+
+    case broadcast:
+      // cant do led stuff here, probs to do with the button interupts
+
+      team = !team;
+      startWiFi();
       break;
   }
 }
