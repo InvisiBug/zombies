@@ -42,7 +42,7 @@ void topButtonClicked() {
       }
       break;
 
-    case broadcast:
+    case beacon:
       team = !team;
       startWiFi();
       break;
@@ -76,7 +76,7 @@ void bottomButtonClicked() {
       }
       break;
 
-    case broadcast:
+    case beacon:
       // cant do led stuff here, probs to do with the button interupts
 
       team = !team;

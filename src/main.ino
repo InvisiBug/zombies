@@ -16,6 +16,8 @@
 #include <Streaming.h>
 #include <WiFiClient.h>
 
+#include "gameEngine/gameEngine.h"
+
 ////////////////////////////////////////////////////////////////////////
 //
 //  ######
@@ -65,6 +67,8 @@ CRGB currentLED[totalLEDs];
 OneButton topButton(topButtonPin, true);
 OneButton bottomButton(bottomButtonPin, true);
 
+GameEngine gameEngine(totalLEDs, currentLED);
+
 // Effects
 
 ////////////////////////////////////////////////////////////////////////
@@ -85,7 +89,7 @@ enum Team {
 
 enum Mode {
   game,
-  broadcast,
+  beacon,
   dev
 };
 
@@ -99,8 +103,8 @@ enum Gamestate {
 // char* mode = "Game";
 
 int gameState = lobby;  //? Set to lobby for actual game
-int team = human;
-int mode = broadcast;
+int team = zombie;
+int mode = beacon;
 
 // Options
 int LEDBrightness = 20;   // As a percentage (saved as a dynamic variable to let us change later)
@@ -216,7 +220,7 @@ void loop(void) {
       }
       break;
 
-    case broadcast:
+    case beacon:
 
       int n = WiFi.scanNetworks(false, false, wifiChannel);
 
