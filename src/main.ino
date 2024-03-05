@@ -104,7 +104,7 @@ enum Gamestate {
 
 int gameState = lobby;  //? Set to lobby for actual game
 int team = zombie;
-int mode = beacon;
+int mode = dev;
 
 // Options
 int LEDBrightness = 20;   // As a percentage (saved as a dynamic variable to let us change later)
@@ -173,9 +173,8 @@ void setup() {
 
   allOff();
 
-  startWiFi();
-
-  Serial << mode << endl;
+WiFi.mode(WIFI_OFF);
+  // startWiFi();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -196,28 +195,48 @@ void loop(void) {
   // LEDTest();
 
   switch (mode) {
+    case dev:
+      // Serial << "Dev" << endl;
+
+      gameEngine.run();
+      // for (int i = 0; i < 7; i++) {
+      //   currentLED[i] = 0x0000ff;
+      // }
+      // FastLED.show();
+
+      // delay(250);
+
+      // for (int i = 0; i < 7; i++) {
+      //   currentLED[i] = 0x000000;
+      // }
+      // FastLED.show();
+
+      // delay(250);
+      break;
+
     case game:
-      switch (gameState) {
-        case lobby:
-          preGameLobby();
-          break;
+      Serial << gameEngine.gameState << endl;
+      // switch (gameState) {
+      //   case lobby:
+      //     preGameLobby();
+      //     break;
 
-        case countdown:
-          checkCountDownTime();
-          break;
+      //   case countdown:
+      //     checkCountDownTime();
+      //     break;
 
-        case runGame:
-          if (gameTimeRemaining()) {
-            runGameWithoutBuffer();  // Still time remaining, play game
-          } else {
-            gameState = postGame;
-          }
-          break;
+      //   case runGame:
+      //     if (gameTimeRemaining()) {
+      //       runGameWithoutBuffer();  // Still time remaining, play game
+      //     } else {
+      //       gameState = postGame;
+      //     }
+      //     break;
 
-        case postGame:
-          endGameLobby();
-          break;
-      }
+      //   case postGame:
+      //     endGameLobby();
+      //     break;
+      // }
       break;
 
     case beacon:

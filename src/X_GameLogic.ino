@@ -10,16 +10,16 @@
 //
 ////////////////////////////////////////////////////////////////////////
 // Pre start countdown
-void lobbyCountdown() {
-  Serial << "Lobby Countdown" << endl;
-  if (lobbyCountdownRunning) {
-    checkCountDownTime();  // Start count down
-  } else {
-    //   // Countdown starts, take current time
-    lobbyCountdownRunning = true;
-    timeLobbyCountdownStarted = millis();
-  }
-}
+// void lobbyCountdown() {
+//   Serial << "Lobby Countdown" << endl;
+//   if (lobbyCountdownRunning) {
+//     checkCountDownTime();  // Start count down
+//   } else {
+//     //   // Countdown starts, take current time
+//     lobbyCountdownRunning = true;
+//     timeLobbyCountdownStarted = millis();
+//   }
+// }
 
 void checkCountDownTime() {
   // Serial << "Check Count Down Time" << endl;

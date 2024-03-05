@@ -1,15 +1,15 @@
 void startButtons() {
-  topButton.setClickTicks(350);    // 350
-  topButton.setPressTicks(250);    // 250
-  topButton.setDebounceTicks(50);  // 20
+  topButton.setClickMs(350);    // 350
+  topButton.setPressMs(250);    // 250
+  topButton.setDebounceMs(50);  // 20
 
   topButton.attachClick(topButtonClicked);
   topButton.attachLongPressStart(topButtonHeld);
   // topButton.attachDoubleClick(doubleClick);
 
-  bottomButton.setClickTicks(350);    // 350
-  bottomButton.setPressTicks(250);    // 250
-  bottomButton.setDebounceTicks(50);  // 20
+  bottomButton.setClickMs(350);    // 350
+  bottomButton.setPressMs(250);    // 250
+  bottomButton.setDebounceMs(50);  // 20
 
   bottomButton.attachClick(bottomButtonClicked);
   bottomButton.attachLongPressStart(bottomButtonHeld);
@@ -25,11 +25,15 @@ void tickButtons() {
  * Top Button
  */
 void topButtonClicked() {
-  Serial << "Top Button Clicked" << endl;
+  Serial << "Hardware, Top Button Clicked" << endl;
 
   switch (mode) {
+    case dev:
+      gameEngine.topButtonClicked();
+      break;
+
     case game:
-      switch (gameState) {
+      switch (gameEngine.gameState) {
         case lobby:
           team = !team;
           break;
@@ -50,22 +54,27 @@ void topButtonClicked() {
 }
 
 void topButtonHeld() {
-  Serial << "Top Button Held" << endl;
+  Serial << "Hardware, Top Button Held" << endl;
 }
 
 /*
  * Bottom Button
  */
 void bottomButtonClicked() {
-  Serial << "Bottom Button Clicked" << endl;
+  Serial << "Hardware, Bottom Button Clicked" << endl;
 
   switch (mode) {
+    case dev:
+      gameEngine.bottomButtonClicked();
+      break;
+
     case game:
       switch (gameState) {
         case lobby:
-          timeLobbyCountdownStarted = millis();
-          startWiFi();
-          gameState = countdown;
+          gameEngine.startLobbyCountdown();
+          // timeLobbyCountdownStarted = millis();
+          // startWiFi();
+          // gameState = countdown;
           break;
         case runGame:
           showTimeLeft();
@@ -86,5 +95,5 @@ void bottomButtonClicked() {
 }
 
 void bottomButtonHeld() {
-  Serial << "Bottom Button Held" << endl;
+  Serial << "Hardware, Bottom Button Held" << endl;
 }
