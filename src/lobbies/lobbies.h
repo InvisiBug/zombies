@@ -1,10 +1,12 @@
 #ifndef LOBBIES_H
 #define LOBBIES_H
 
+#include "./leds/leds.h"
 #include "FastLED.h"
 
-class Lobbies {
+class Lobbies : public LEDs {
  public:
+  Lobbies();
   Lobbies(int totalLEDs, CRGB *currentLED);  // Constructor
   void begin();
 
@@ -20,6 +22,8 @@ class Lobbies {
 
   CRGB *currentLED;  // LED strip object
   int totalLEDs;
+
+  LEDs leds;
 
   int wifiChannel = 10;
 

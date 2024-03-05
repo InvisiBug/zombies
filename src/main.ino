@@ -34,6 +34,9 @@
 #define bottomButtonPin 13  // D7
 #define ledPin 14           // D5
 
+#define data 4   // D2
+#define clock 5  // D1
+
 #define time1Pin 5
 #define time2Pin 4
 #define time3Pin 3
@@ -107,7 +110,7 @@ int team = zombie;
 int mode = dev;
 
 // Options
-int LEDBrightness = 20;   // As a percentage (saved as a dynamic variable to let us change later)
+int LEDBrightness = 10;   // As a percentage (saved as a dynamic variable to let us change later)
 int bitingDistance = 50;  //? Set to 40 for actual game
 int maxDistance = 100;
 int timeTillTurned = 1.5 * 1000;
@@ -164,7 +167,8 @@ void setup() {
 
   ///////
   // LEDs
-  FastLED.addLeds<WS2811, ledPin, GRB>(currentLED, totalLEDs);
+  // FastLED.addLeds<WS2811, ledPin, GRB>(currentLED, totalLEDs);
+  FastLED.addLeds<APA102, data, clock, BGR, DATA_RATE_MHZ(24)>(currentLED, totalLEDs);  // * May not need to specify the data rate
   FastLED.setBrightness(LEDBrightness * 2.55);
   // FastLED.setCorrection(0xFFB0F0);
   // FastLED.setDither( 1 );
@@ -173,8 +177,8 @@ void setup() {
 
   allOff();
 
-WiFi.mode(WIFI_OFF);
-  // startWiFi();
+  WiFi.mode(WIFI_OFF);
+
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -199,6 +203,20 @@ void loop(void) {
       // Serial << "Dev" << endl;
 
       gameEngine.run();
+
+  //      Serial << "On" << endl;
+  // for (int i = 0; i < totalLEDs; i++) {
+  //   currentLED[i] = 0xff0000;
+  // }
+  // FastLED.show();
+  // delay(500);
+
+  // Serial << "Off" << endl;
+  // for (int i = 0; i < totalLEDs; i++) {
+  //   currentLED[i] = 0x000000;
+  // }
+  // FastLED.show();
+  // delay(500);
       // for (int i = 0; i < 7; i++) {
       //   currentLED[i] = 0x0000ff;
       // }

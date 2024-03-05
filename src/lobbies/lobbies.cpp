@@ -9,7 +9,9 @@ using namespace std;
 
 // need to inherit the led class and use it here as well as anywhere else using leds
 
-Lobbies::Lobbies(int totalLEDs, CRGB *currentLED) {
+Lobbies::Lobbies() {}
+
+Lobbies::Lobbies(int totalLEDs, CRGB *currentLED):LEDs(totalLEDs, currentLED) {
   this->totalLEDs = totalLEDs;
   this->currentLED = currentLED;
 }
@@ -39,7 +41,6 @@ void Lobbies::preGameLobby(int colour) {
   if (currentMillis - lastMillis >= 100) {
     lastMillis = currentMillis;
     setAllLEDs(colour);
-
 
     // Make one blank led move along the strip
     if (preGameLobbyPos < totalLEDs) {
@@ -75,58 +76,59 @@ void Lobbies::endGameLobby(int colour) {
       FastLED.show();
       flipFlop = !flipFlop;
     }
-  }}
-
-  /*
-    * Timer for the lobby countdown
-    returns true if the countdown is finished
-    returns false if the countdown is still running
-    timeLobbyCountdownStarted is set by the button click
-  */
-  bool Lobbies::lobbyCountdownFinished(int timeLobbyCountdownStarted) {
-    int lobbyCountdownTimeRemaining = countDownDuration - (millis() - timeLobbyCountdownStarted);
-
-    // printTimeRemaining(lobbyCountdownTimeRemaining);
-
-    if (lobbyCountdownTimeRemaining < 0) {
-      return true;
-    } else {
-      return false;
-    }
   }
+}
 
-  //////////////////////////////////////////////////////////////////////////////
-  //
-  // ###
-  //  #  #    # ##### ###### #####  #    #   ##   #
-  //  #  ##   #   #   #      #    # #    #  #  #  #
-  //  #  # #  #   #   #####  #    # #    # #    # #
-  //  #  #  # #   #   #      #####  #    # ###### #
-  //  #  #   ##   #   #      #   #   #  #  #    # #
-  // ### #    #   #   ###### #    #   ##   #    # ######
-  //
-  //////////////////////////////////////////////////////////////////////////////
-  void Lobbies::setAllLEDs(int colour) {
-    for (int i = 0; i < totalLEDs; i++) {
-      currentLED[i] = colour;
-    }
-    FastLED.show();
+/*
+  * Timer for the lobby countdown
+  returns true if the countdown is finished
+  returns false if the countdown is still running
+  timeLobbyCountdownStarted is set by the button click
+*/
+bool Lobbies::lobbyCountdownFinished(int timeLobbyCountdownStarted) {
+  int lobbyCountdownTimeRemaining = countDownDuration - (millis() - timeLobbyCountdownStarted);
+
+  // printTimeRemaining(lobbyCountdownTimeRemaining);
+
+  if (lobbyCountdownTimeRemaining < 0) {
+    return true;
+  } else {
+    return false;
   }
+}
 
-  void Lobbies::countDownAnimation(int colour) {
-    // setAllLEDs(colour);
-
-    for (int i = 0; i < 7; i++) {
-      currentLED[i] = colour;
-    }
-    FastLED.show();
-
-    delay(250);
-
-    for (int i = 0; i < 7; i++) {
-      currentLED[i] = 0x000000;
-    }
-    FastLED.show();
-
-    delay(250);
+//////////////////////////////////////////////////////////////////////////////
+//
+// ###
+//  #  #    # ##### ###### #####  #    #   ##   #
+//  #  ##   #   #   #      #    # #    #  #  #  #
+//  #  # #  #   #   #####  #    # #    # #    # #
+//  #  #  # #   #   #      #####  #    # ###### #
+//  #  #   ##   #   #      #   #   #  #  #    # #
+// ### #    #   #   ###### #    #   ##   #    # ######
+//
+//////////////////////////////////////////////////////////////////////////////
+void Lobbies::setAllLEDs(int colour) {
+  for (int i = 0; i < totalLEDs; i++) {
+    currentLED[i] = colour;
   }
+  FastLED.show();
+}
+
+void Lobbies::countDownAnimation(int colour) {
+  // setAllLEDs(colour);
+
+  for (int i = 0; i < 7; i++) {
+    currentLED[i] = colour;
+  }
+  FastLED.show();
+
+  delay(250);
+
+  for (int i = 0; i < 7; i++) {
+    currentLED[i] = 0x000000;
+  }
+  FastLED.show();
+
+  delay(250);
+}

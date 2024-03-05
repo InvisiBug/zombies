@@ -1,5 +1,7 @@
 #ifndef GAMEENGINE_H
 #define GAMEENGINE_H
+#include "./game/game.h"
+#include "./leds/leds.h"
 #include "./lobbies/lobbies.h"
 #include "FastLED.h"
 
@@ -15,16 +17,16 @@
 // Multiple inheritance
 // https://www.geeksforgeeks.org/multiple-inheritance-in-c/
 
-class GameEngine {
+class GameEngine : public Lobbies, public Game {
  public:
   int gameState = lobby;
 
+  GameEngine();                                 // Constructor
   GameEngine(int totalLEDs, CRGB *currentLED);  // Constructor
 
   void run();
   void begin();
   void setGameState(int gameState);
-  void startLobbyCountdown();
 
   void topButtonClicked();
   void bottomButtonClicked();
@@ -34,12 +36,16 @@ class GameEngine {
   void reset();
   void startWiFi(int team);
 
-  bool gameTimeRemaining(int timeGameStarted);
-  void printGameTimeRemaining(int timeGameStarted);
+
   void showTimeLeft(int timeGameStarted);
 
   CRGB *currentLED;  // LED strip object
+
   Lobbies lobbies;
+  LEDs leds;
+
+  Game game;
+
   int totalLEDs;
 
   int timeLobbyCountdownStarted;  // Used to keep track time left in lobby
@@ -47,7 +53,7 @@ class GameEngine {
 
   int wifiChannel = 10;
 
-  int totalGameTime = 3 * 1000;  // In seconds
+  int totalGameTime = 30 * 1000;  // In seconds
 
   int team = human;
 

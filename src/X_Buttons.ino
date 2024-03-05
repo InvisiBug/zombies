@@ -71,7 +71,7 @@ void bottomButtonClicked() {
     case game:
       switch (gameState) {
         case lobby:
-          gameEngine.startLobbyCountdown();
+          // gameEngine.startLobbyCountdown();
           // timeLobbyCountdownStarted = millis();
           // startWiFi();
           // gameState = countdown;

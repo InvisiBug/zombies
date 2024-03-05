@@ -3,12 +3,15 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 
+#include "./leds/leds.h"
 #include "./lobbies/lobbies.h"
 #include "Arduino.h"
 #include "Streaming.h"
 using namespace std;
 
-GameEngine::GameEngine(int totalLEDs, CRGB *currentLED) : lobbies(totalLEDs, currentLED) {
+GameEngine::GameEngine() {}
+// GameEngine::GameEngine(int totalLEDs, CRGB *currentLED):lobbies(totalLEDs, currentLED), leds(totalLEDs, currentLED){
+GameEngine::GameEngine(int totalLEDs, CRGB *currentLED) : lobbies(totalLEDs, currentLED), game(totalLEDs, currentLED) {
   this->totalLEDs = totalLEDs;
   this->currentLED = currentLED;
 }
@@ -30,6 +33,11 @@ void GameEngine::begin() {
 void GameEngine::run() {
   switch (gameState) {
     case lobby:
+      /*
+       * Sit in the lobby changing team on a button press
+       * move on to countdown on button press (below)
+       */
+      // leds.begin();
       lobbies.preGameLobby(getTeamColour());
       // lobbies.countDownAnimation(getTeamColour());
       break;
@@ -41,22 +49,24 @@ void GameEngine::run() {
        */
       if (!lobbies.lobbyCountdownFinished(timeLobbyCountdownStarted)) {
         lobbies.countDownAnimation(getTeamColour());  // count down animation;
+
       } else {
-        gameState = runGame;
+        setGameState(runGame);
         timeGameStarted = millis();
         startWiFi(team);  // Only start wifi after the lobby has finished
       }
+
       break;
 
     case runGame:
-      Serial << "Game running" << endl;
-      if (gameTimeRemaining(timeGameStarted)) {
-        Serial << "Game Running" << endl;
-        // runGameWithoutBuffer();  // Still time remaining, play game
+      if (game.gameTimeRemaining(timeGameStarted, totalGameTime)) {
+        game.run(team);
+
       } else {
         WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
-        gameState = postGame;
+        setGameState(postGame);
       }
+
       break;
 
     case postGame:
@@ -66,18 +76,8 @@ void GameEngine::run() {
 }
 
 // TODO: move this to game class
-bool GameEngine::gameTimeRemaining(int timeGameStarted) {
-  int gameTimeLeft = totalGameTime - (millis() - timeGameStarted);
 
-  printGameTimeRemaining(gameTimeLeft);
-
-  if (gameTimeLeft > 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
+// TODO: Make lobby countdown show time remaining when pressing a button
 void GameEngine::showTimeLeft(int timeGameStarted) {
   // int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);
   int gameTimeLeft = totalGameTime - (millis() - timeGameStarted);
@@ -107,11 +107,6 @@ void GameEngine::showTimeLeft(int timeGameStarted) {
 }
 
 // TODO: move this to game class
-void GameEngine::printGameTimeRemaining(int time) {
-  int minsLeft = (time % (1000 * 60 * 60)) / (1000 * 60);
-  int secondsLeft = ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
-  Serial << "Remaining Time " << minsLeft << ":" << secondsLeft << endl;
-}
 
 void GameEngine::topButtonClicked() {
   Serial << "Game Engine, Top Button Clicked" << endl;
@@ -138,7 +133,8 @@ void GameEngine::bottomButtonClicked() {
   switch (gameState) {
     case lobby:
       Serial << "Start lobby countdown" << endl;
-      startLobbyCountdown();
+      timeLobbyCountdownStarted = millis();
+      setGameState(countdown);
       break;
 
     case runGame:
@@ -154,22 +150,16 @@ void GameEngine::bottomButtonClicked() {
   }
 }
 
-void GameEngine::startLobbyCountdown() {
-  timeLobbyCountdownStarted = millis();
-  // startWiFi(team);
-  gameState = countdown;
-}
-
 void GameEngine::setGameState(int gameState) {
   this->gameState = gameState;
 }
 
 void GameEngine::reset() {
-  gameState = lobby;
+  setGameState(lobby);
   lobbies.reset();  // need to reset pre and post game lobby counters to (totalLEDs -1)
 }
 
-// TODO: Move to wifi class
+// TODO: Move to game class for now, then to wifi class
 void GameEngine::startWiFi(int team) {
   // allOff();
   WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
