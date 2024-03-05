@@ -19,6 +19,11 @@ GameEngine::GameEngine(int totalLEDs, CRGB *currentLED) : lobbies(totalLEDs, cur
 void GameEngine::begin() {
 }
 
+void GameEngine::reset() {
+  setGameState(lobby);
+  lobbies.reset();  // need to reset pre and post game lobby counters to (totalLEDs -1)
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 //  ######
@@ -37,9 +42,7 @@ void GameEngine::run() {
        * Sit in the lobby changing team on a button press
        * move on to countdown on button press (below)
        */
-      // leds.begin();
       lobbies.preGameLobby(getTeamColour());
-      // lobbies.countDownAnimation(getTeamColour());
       break;
 
     case countdown:
@@ -55,7 +58,6 @@ void GameEngine::run() {
         timeGameStarted = millis();
         startWiFi(team);  // Only start wifi after the lobby has finished
       }
-
       break;
 
     case runGame:
@@ -66,7 +68,6 @@ void GameEngine::run() {
         WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
         setGameState(postGame);
       }
-
       break;
 
     case postGame:
@@ -75,39 +76,7 @@ void GameEngine::run() {
   }
 }
 
-// TODO: move this to game class
-
-// TODO: Make lobby countdown show time remaining when pressing a button
-void GameEngine::showTimeLeft(int timeGameStarted) {
-  // int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);
-  int gameTimeLeft = totalGameTime - (millis() - timeGameStarted);
-
-  Serial << "Game time left: " << gameTimeLeft << endl;
-
-  int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);  // ! Not sure what the -100 is here
-
-  Serial << "Indicator Level: " << indicatorLevel << endl;
-
-  // showDistance(indicatorLevel, timeColour);
-  for (int i = 0; i < indicatorLevel; i++) {
-    currentLED[i] = timeColour;
-  }
-  FastLED.show();
-
-  for (int i = totalLEDs; i > indicatorLevel; i--) {
-    currentLED[i] = 0x000000;
-  }
-  FastLED.show();
-  delay(500);
-
-  for (int i = totalLEDs; i > 0; i--) {
-    currentLED[i] = 0x000000;
-  }
-  FastLED.show();
-}
-
-// TODO: move this to game class
-
+// Buttons
 void GameEngine::topButtonClicked() {
   Serial << "Game Engine, Top Button Clicked" << endl;
 
@@ -150,13 +119,37 @@ void GameEngine::bottomButtonClicked() {
   }
 }
 
-void GameEngine::setGameState(int gameState) {
-  this->gameState = gameState;
+// TODO: Make lobby countdown show time remaining when pressing a button
+void GameEngine::showTimeLeft(int timeGameStarted) {
+  // int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);
+  int gameTimeLeft = totalGameTime - (millis() - timeGameStarted);
+
+  Serial << "Game time left: " << gameTimeLeft << endl;
+
+  int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);  // ! Not sure what the -100 is here
+
+  Serial << "Indicator Level: " << indicatorLevel << endl;
+
+  // showDistance(indicatorLevel, timeColour);
+  for (int i = 0; i < indicatorLevel; i++) {
+    currentLED[i] = timeColour;
+  }
+  FastLED.show();
+
+  for (int i = totalLEDs; i > indicatorLevel; i--) {
+    currentLED[i] = 0x000000;
+  }
+  FastLED.show();
+  delay(500);
+
+  for (int i = totalLEDs; i > 0; i--) {
+    currentLED[i] = 0x000000;
+  }
+  FastLED.show();
 }
 
-void GameEngine::reset() {
-  setGameState(lobby);
-  lobbies.reset();  // need to reset pre and post game lobby counters to (totalLEDs -1)
+void GameEngine::setGameState(int gameState) {
+  this->gameState = gameState;
 }
 
 // TODO: Move to game class for now, then to wifi class

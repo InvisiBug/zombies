@@ -8,17 +8,11 @@
 using namespace std;
 
 // need to inherit the led class and use it here as well as anywhere else using leds
-Game::Game() {
-}
+Game::Game() {}
+
 Game::Game(int totalLEDs, CRGB *currentLED) {
   this->totalLEDs = totalLEDs;
   this->currentLED = currentLED;
-}
-
-void Game::begin() {
-}
-
-void Game::reset() {
 }
 
 //////////////////////////////////////////////////////////////////////////////

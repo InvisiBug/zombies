@@ -12,17 +12,15 @@ class Game {
  public:
   Game();
   Game(int totalLEDs, CRGB *currentLED);  // Constructor
-  void begin();
 
-  bool gameTimeRemaining(int timeGameStarted, int totalGameTime);
+  void showDistance(int currentDistance, int colour);
   void printGameTimeRemaining(int time);
-  void reset();
+  void startWiFi(int team);
   void run(int &team);
 
-  void startWiFi(int team);
+  bool gameTimeRemaining(int timeGameStarted, int totalGameTime);
 
   int getTeamColour(int team);
-  void showDistance(int currentDistance, int colour);
 
  private:
   CRGB *currentLED;  // LED strip object
@@ -31,15 +29,11 @@ class Game {
   void setAllLEDs(int colour);
 
   int wifiChannel = 10;
-  // int gameState = lobby;
 
   int currentDistance;
   int maxDistance = 100;
   int bitingDistance = 10;  //? Set to 40 for actual game
   int timeTillTurned = 1.5 * 1000;
-
-  int currentMillis;
-  int lastMillis;
 
   enum Team {
     human,

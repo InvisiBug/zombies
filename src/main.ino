@@ -167,8 +167,8 @@ void setup() {
 
   ///////
   // LEDs
-  // FastLED.addLeds<WS2811, ledPin, GRB>(currentLED, totalLEDs);
-  FastLED.addLeds<APA102, data, clock, BGR, DATA_RATE_MHZ(24)>(currentLED, totalLEDs);  // * May not need to specify the data rate
+  FastLED.addLeds<WS2811, ledPin, GRB>(currentLED, totalLEDs);
+  // FastLED.addLeds<APA102, data, clock, BGR, DATA_RATE_MHZ(24)>(currentLED, totalLEDs);  // * May not need to specify the data rate
   FastLED.setBrightness(LEDBrightness * 2.55);
   // FastLED.setCorrection(0xFFB0F0);
   // FastLED.setDither( 1 );
