@@ -44,16 +44,14 @@ class GameEngine : public Lobbies, public Game {
 
   int totalLEDs;
 
-  int wifiChannel = 10;
-
   int timeLobbyCountdownStarted;  // Used to keep track time left in lobby
   int timeGameStarted;            // Used to keep track of time left in game
 
-  // int lobbyCountdownTime = 5 * 1000;       // In seconds
-  int lobbyCountdownTime = 2 * 60 * 1000;  // In mins
+  int lobbyCountdownTime = 5 * 1000;  // In seconds
+  // int lobbyCountdownTime = 2 * 60 * 1000;  // In mins
 
-  // int totalGameTime = 1 * 60 * 1000;   // In mins
-  int totalGameTime = 10 * 60 * 1000;  // In mins
+  int totalGameTime = 1 * 60 * 1000;  // In mins
+  // int totalGameTime = 10 * 60 * 1000;  // In mins
 
   int team = human;
 

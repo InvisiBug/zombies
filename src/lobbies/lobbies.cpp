@@ -33,21 +33,52 @@ void Lobbies::reset() {
 //
 //////////////////////////////////////////////////////////////////////////////
 void Lobbies::preGameLobby(int colour) {
+  // currentMillis = millis();
+
+  // if (currentMillis - lastMillis >= 75) {
+  //   lastMillis = currentMillis;
+  //   setAllLEDs(colour);
+
+  //   // Make one blank led move along the strip
+  //   if (preGameLobbyPos < totalLEDs) {
+  //     currentLED[preGameLobbyPos] = 0x000000;
+
+  //     FastLED.show();
+
+  //     preGameLobbyPos++;
+  //   } else {
+  //     preGameLobbyPos = 0;
+  //   }
+  // }
+
   currentMillis = millis();
 
-  if (currentMillis - lastMillis >= 250) {
+  if (currentMillis - lastMillis >= 75) {
     lastMillis = currentMillis;
     setAllLEDs(colour);
 
     // Make one blank led move along the strip
-    if (preGameLobbyPos < totalLEDs) {
+    if (preGameLobbyPos < totalLEDs && !flipFlop) {
       currentLED[preGameLobbyPos] = 0x000000;
 
       FastLED.show();
 
       preGameLobbyPos++;
-    } else {
-      preGameLobbyPos = 0;
+    } else if (preGameLobbyPos >= 0 && flipFlop) {
+      currentLED[preGameLobbyPos] = 0x000000;
+
+      FastLED.show();
+
+      preGameLobbyPos--;
+    }
+
+    // If the LED has reached the end of the strip, flip the direction
+    if (preGameLobbyPos == totalLEDs - 1) {  // "Blank" LED fell off the end of the strip (-1) corrects that
+      flipFlop = true;
+    }
+    // If the LED has reached the start of the strip, flip the direction
+    else if (preGameLobbyPos == 0) {
+      flipFlop = false;
     }
   }
 }
@@ -58,15 +89,28 @@ void Lobbies::preGameLobby(int colour) {
 void Lobbies::countDownAnimation(int colour) {
   currentMillis = millis();
 
-  if (currentMillis - lastMillis >= 250) {
+  if (currentMillis - lastMillis >= 10) {  // Adjust this value to change the speed of the fade
     lastMillis = currentMillis;
 
     if (flipFlop) {
-      setAllLEDs(colour);
+      brightness += 17;  // Adjust this value to change the step size of the fade
+      if (brightness >= 255) {
+        flipFlop = !flipFlop;
+      }
     } else {
-      setAllLEDs(0x000000);
+      brightness -= 17;  // Adjust this value to change the step size of the fade
+      if (brightness <= 0) {
+        flipFlop = !flipFlop;
+      }
     }
-    flipFlop = !flipFlop;
+
+    // Apply the brightness to the colour
+    int r = ((colour >> 16) & 0xFF) * brightness / 255;
+    int g = ((colour >> 8) & 0xFF) * brightness / 255;
+    int b = (colour & 0xFF) * brightness / 255;
+    int fadedColour = (r << 16) | (g << 8) | b;
+
+    setAllLEDs(fadedColour);
   }
 }
 
@@ -121,4 +165,10 @@ void Lobbies::setAllLEDs(int colour) {
     currentLED[i] = colour;
   }
   FastLED.show();
+}
+
+void Lobbies::printTimeRemaining(int time) {
+  int minsLeft = (time % (1000 * 60 * 60)) / (1000 * 60);
+  int secondsLeft = ((time % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
+  Serial << "Remaining Time " << minsLeft << ":" << secondsLeft << endl;
 }

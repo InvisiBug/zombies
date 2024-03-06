@@ -157,50 +157,51 @@ void setup() {
 //
 ///////////////////////////////////////////////////////////////////////
 void loop(void) {
-  tickButtons();
+  // tickButtons();
 
-  switch (mode) {
-    case dev:
-      gameEngine.run();
-      break;
+      Serial << "Hello" << endl;
+  // switch (mode) {
+  //   case dev:
+  //     gameEngine.run();
+  //     break;
 
-    case game:
-      gameEngine.run();
-      break;
+  //   case game:
+  //     gameEngine.run();
+  //     break;
 
-    case beacon:
+  //   case beacon:
 
-      int n = WiFi.scanNetworks(false, false, wifiChannel);
+  //     int n = WiFi.scanNetworks(false, false, wifiChannel);
 
-      if (team == human) {
-        //* Maybe make it only display the closest zombie
-        currentDistance = maxDistance;
-        // Serial << "human" << endl;
+  //     if (team == human) {
+  //       //* Maybe make it only display the closest zombie
+  //       currentDistance = maxDistance;
+  //       // Serial << "human" << endl;
 
-        for (int i = 0; i < n; i++) {
-          if (WiFi.SSID(i).indexOf("Zombie") != -1) {
-            int currentDistance = abs(WiFi.RSSI(i));
+  //       for (int i = 0; i < n; i++) {
+  //         if (WiFi.SSID(i).indexOf("Zombie") != -1) {
+  //           int currentDistance = abs(WiFi.RSSI(i));
 
-            // Serial << currentDistance << endl;  // Print out distance
+  //           // Serial << currentDistance << endl;  // Print out distance
 
-            showDistance(currentDistance, humanColour);
-          }
-        }
-      } else if (team == zombie) {
-        //* Maybe make it only display the closest zombie
-        currentDistance = maxDistance;
-        // Serial << "zombie" << endl;
+  //           showDistance(currentDistance, humanColour);
+  //         }
+  //       }
+  //     } else if (team == zombie) {
+  //       //* Maybe make it only display the closest zombie
+  //       currentDistance = maxDistance;
+  //       // Serial << "zombie" << endl;
 
-        for (int i = 0; i < n; i++) {
-          if (WiFi.SSID(i).indexOf("Human") != -1) {
-            int currentDistance = abs(WiFi.RSSI(i));
+  //       for (int i = 0; i < n; i++) {
+  //         if (WiFi.SSID(i).indexOf("Human") != -1) {
+  //           int currentDistance = abs(WiFi.RSSI(i));
 
-            // Serial << currentDistance << endl;  // Print out distance
+  //           // Serial << currentDistance << endl;  // Print out distance
 
-            showDistance(currentDistance, zombieColour);
-          }
-        }
-      }
-      break;
-  }
+  //           showDistance(currentDistance, zombieColour);
+  //         }
+  //       }
+  //     }
+  //     break;
+  // }
 }

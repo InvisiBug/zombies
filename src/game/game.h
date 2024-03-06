@@ -32,11 +32,11 @@ class Game {
 
   int currentDistance;
   int maxDistance = 100;
-  int bitingDistance = 50;          //? Set to 40 for actual game
-  int timeTillTurned = 1.5 * 1000;  // ! Not currently used
+  int bitingDistance = 50;  //? Set to 40 for actual game
 
   //! Used for the buffered version of the game (Not implemented)
   // Set the buffer to biting distance + 1 to handle not finding the zombie network
+  int timeTillTurned = 1.5 * 1000;
   int buffer[5] = {bitingDistance + 1, bitingDistance + 1, bitingDistance + 1, bitingDistance + 1, bitingDistance + 1};
   int bufferPos = 0;
   int bufferAverage = 0;

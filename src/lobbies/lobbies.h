@@ -19,6 +19,8 @@ class Lobbies : public LEDs {
  private:
   void setAllLEDs(int colour);
 
+  void printTimeRemaining(int time);
+
   CRGB *currentLED;  // LED strip object
   int totalLEDs;
 
@@ -28,6 +30,8 @@ class Lobbies : public LEDs {
   int lastMillis;
 
   bool flipFlop = false;
+
+  int brightness;
 
   int preGameLobbyPos = totalLEDs - 1;   // leds are wired up counter clockwise
   int postGameLobbyPos = totalLEDs - 1;  // leds are wired up counter clockwise
