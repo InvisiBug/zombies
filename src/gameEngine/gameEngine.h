@@ -34,16 +34,14 @@ class GameEngine : public Lobbies, public Game {
  private:
   int getTeamColour();
   void reset();
-  void startWiFi(int team);
-
 
   void showTimeLeft(int timeGameStarted);
 
   CRGB *currentLED;  // LED strip object
 
+  //*  Game classes
   Lobbies lobbies;
   LEDs leds;
-
   Game game;
 
   int totalLEDs;

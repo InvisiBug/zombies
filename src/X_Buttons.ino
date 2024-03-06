@@ -29,21 +29,11 @@ void topButtonClicked() {
 
   switch (mode) {
     case dev:
-      gameEngine.topButtonClicked();
+
       break;
 
     case game:
-      switch (gameEngine.gameState) {
-        case lobby:
-          team = !team;
-          break;
-        case runGame:
-          showTimeLeft();
-          break;
-        case postGame:
-          resetGame();
-          break;
-      }
+      gameEngine.topButtonClicked();
       break;
 
     case beacon:
@@ -65,29 +55,14 @@ void bottomButtonClicked() {
 
   switch (mode) {
     case dev:
-      gameEngine.bottomButtonClicked();
+
       break;
 
     case game:
-      switch (gameState) {
-        case lobby:
-          // gameEngine.startLobbyCountdown();
-          // timeLobbyCountdownStarted = millis();
-          // startWiFi();
-          // gameState = countdown;
-          break;
-        case runGame:
-          showTimeLeft();
-          break;
-        case postGame:
-          resetGame();
-          break;
-      }
+      gameEngine.bottomButtonClicked();
       break;
 
     case beacon:
-      // cant do led stuff here, probs to do with the button interupts
-
       team = !team;
       startWiFi();
       break;

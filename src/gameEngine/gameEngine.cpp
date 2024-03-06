@@ -56,7 +56,7 @@ void GameEngine::run() {
       } else {
         setGameState(runGame);
         timeGameStarted = millis();
-        startWiFi(team);  // Only start wifi after the lobby has finished
+        game.startWiFi(team);  // Only start wifi after the lobby has finished
       }
       break;
 
@@ -150,38 +150,6 @@ void GameEngine::showTimeLeft(int timeGameStarted) {
 
 void GameEngine::setGameState(int gameState) {
   this->gameState = gameState;
-}
-
-// TODO: Move to game class for now, then to wifi class
-void GameEngine::startWiFi(int team) {
-  // allOff();
-  WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
-
-  delay(100);  // Added to try and prevent crashing (Remove if not possible)
-
-  /*
-    Create the appropriate network for the team, adding the chip id on the end
-    can be used for tracking players at a later date
-  */
-  switch (team) {
-    case human:
-      Serial << "Player is a human" << endl;
-
-      char humanssid[25];
-      snprintf(humanssid, 25, "Human-%06X", ESP.getChipId());
-      WiFi.softAP(humanssid, NULL, wifiChannel);
-
-      break;
-
-    case zombie:
-      // Create a zombie wifi network using the chip id, can be used later to track individual zombies
-      Serial << "Player is a zombie" << endl;
-
-      char zombiessid[25];
-      snprintf(zombiessid, 25, "Zombie-%06X", ESP.getChipId());
-      WiFi.softAP(zombiessid, NULL, wifiChannel);
-      break;
-  }
 }
 
 //////////////////////////////////////////////////////////////////////////////
