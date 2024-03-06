@@ -31,8 +31,8 @@ class Game {
   bool log = true;  // Used to turn logging on and off
 
   int currentDistance;
-  int maxDistance = 100;
-  int bitingDistance = 50;  //? Set to 40 for actual game
+  int maxDistance = 100;    //? Set to 100 for actual game
+  int bitingDistance = 40;  //? Set to 40 for actual game
 
   //! Used for the buffered version of the game (Not implemented)
   // Set the buffer to biting distance + 1 to handle not finding the zombie network

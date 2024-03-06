@@ -101,7 +101,7 @@ int team = human;
 int mode = game;
 
 // * All stuff needed for the beacon mode
-int LEDBrightness = 100;   // As a percentage (saved as a dynamic variable to let us change later)
+int LEDBrightness = 100;  // As a percentage (saved as a dynamic variable to let us change later)
 int bitingDistance = 50;  //? Set to 40 for actual game
 
 int maxDistance = 100;
@@ -157,51 +157,51 @@ void setup() {
 //
 ///////////////////////////////////////////////////////////////////////
 void loop(void) {
-  // tickButtons();
+  tickButtons();
 
-      Serial << "Hello" << endl;
-  // switch (mode) {
-  //   case dev:
-  //     gameEngine.run();
-  //     break;
 
-  //   case game:
-  //     gameEngine.run();
-  //     break;
+  switch (mode) {
+    case dev:
+      gameEngine.run();
+      break;
 
-  //   case beacon:
+    case game:
+      gameEngine.run();
+      break;
 
-  //     int n = WiFi.scanNetworks(false, false, wifiChannel);
+    case beacon:
 
-  //     if (team == human) {
-  //       //* Maybe make it only display the closest zombie
-  //       currentDistance = maxDistance;
-  //       // Serial << "human" << endl;
+      int n = WiFi.scanNetworks(false, false, wifiChannel);
 
-  //       for (int i = 0; i < n; i++) {
-  //         if (WiFi.SSID(i).indexOf("Zombie") != -1) {
-  //           int currentDistance = abs(WiFi.RSSI(i));
+      if (team == human) {
+        //* Maybe make it only display the closest zombie
+        currentDistance = maxDistance;
+        // Serial << "human" << endl;
 
-  //           // Serial << currentDistance << endl;  // Print out distance
+        for (int i = 0; i < n; i++) {
+          if (WiFi.SSID(i).indexOf("Zombie") != -1) {
+            int currentDistance = abs(WiFi.RSSI(i));
 
-  //           showDistance(currentDistance, humanColour);
-  //         }
-  //       }
-  //     } else if (team == zombie) {
-  //       //* Maybe make it only display the closest zombie
-  //       currentDistance = maxDistance;
-  //       // Serial << "zombie" << endl;
+            // Serial << currentDistance << endl;  // Print out distance
 
-  //       for (int i = 0; i < n; i++) {
-  //         if (WiFi.SSID(i).indexOf("Human") != -1) {
-  //           int currentDistance = abs(WiFi.RSSI(i));
+            showDistance(currentDistance, humanColour);
+          }
+        }
+      } else if (team == zombie) {
+        //* Maybe make it only display the closest zombie
+        currentDistance = maxDistance;
+        // Serial << "zombie" << endl;
 
-  //           // Serial << currentDistance << endl;  // Print out distance
+        for (int i = 0; i < n; i++) {
+          if (WiFi.SSID(i).indexOf("Human") != -1) {
+            int currentDistance = abs(WiFi.RSSI(i));
 
-  //           showDistance(currentDistance, zombieColour);
-  //         }
-  //       }
-  //     }
-  //     break;
-  // }
+            // Serial << currentDistance << endl;  // Print out distance
+
+            showDistance(currentDistance, zombieColour);
+          }
+        }
+      }
+      break;
+  }
 }

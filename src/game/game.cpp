@@ -50,6 +50,7 @@ void Game::run(int &team) {
 
           if (currentDistance < bitingDistance) {
             if (log) Serial << "Turned" << endl;
+            WiFi.mode(WIFI_OFF);  // Turn off wifi before the animation (wifi takes a while to change state)
 
             for (int i = 0; i < 5; i++) {
               setAllLEDs(zombieColour);
@@ -59,6 +60,8 @@ void Game::run(int &team) {
             }
 
             team = zombie;  // Team has been passed by reference from the game engine (super dodgy but it works for now)
+
+            delay(100);
             startWiFi(team);
           }
         }
