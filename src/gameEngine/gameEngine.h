@@ -33,7 +33,6 @@ class GameEngine : public Lobbies, public Game {
 
  private:
   void reset();
-
   void showTimeLeft(int startTime, int totalTime);
 
   CRGB *currentLED;  // LED strip object
@@ -45,10 +44,10 @@ class GameEngine : public Lobbies, public Game {
 
   int totalLEDs;
 
+  int wifiChannel = 10;
+
   int timeLobbyCountdownStarted;  // Used to keep track time left in lobby
   int timeGameStarted;            // Used to keep track of time left in game
-
-  int wifiChannel = 10;
 
   // int lobbyCountdownTime = 5 * 1000;       // In seconds
   int lobbyCountdownTime = 2 * 60 * 1000;  // In mins

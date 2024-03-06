@@ -13,15 +13,14 @@ class Game {
   Game();
   Game(int totalLEDs, CRGB *currentLED);  // Constructor
 
+  bool gameTimeRemaining(int timeGameStarted, int totalGameTime);
+  int getTeamColour(int team);
+
   void showDistance(int currentDistance, int colour);
   void printGameTimeRemaining(int time);
+  void setAllLEDs(int colour);
   void startWiFi(int team);
   void run(int &team);
-
-  bool gameTimeRemaining(int timeGameStarted, int totalGameTime);
-
-  int getTeamColour(int team);
-  void setAllLEDs(int colour);
 
  private:
   CRGB *currentLED;  // LED strip object

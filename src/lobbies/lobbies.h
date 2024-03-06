@@ -8,11 +8,10 @@ class Lobbies : public LEDs {
  public:
   Lobbies();
   Lobbies(int totalLEDs, CRGB *currentLED);  // Constructor
-  void begin();
 
   void preGameLobby(int colour);
-  void endGameLobby(int colour);
   void countDownAnimation(int colour);
+  void endGameLobby(int colour);
   void reset();
 
   bool lobbyCountdownFinished(int timeLobbyCountdownStarted, int lobbyCountdownTime);
@@ -25,11 +24,6 @@ class Lobbies : public LEDs {
 
   LEDs leds;
 
-  int wifiChannel = 10;
-
-  int team = human;
-  // int gameState = lobby;
-
   int currentMillis;
   int lastMillis;
 
@@ -37,10 +31,5 @@ class Lobbies : public LEDs {
 
   int preGameLobbyPos = totalLEDs - 1;   // leds are wired up counter clockwise
   int postGameLobbyPos = totalLEDs - 1;  // leds are wired up counter clockwise
-
-  enum Team {
-    human,
-    zombie
-  };
 };
 #endif

@@ -16,9 +16,6 @@ Lobbies::Lobbies(int totalLEDs, CRGB *currentLED) : LEDs(totalLEDs, currentLED) 
   this->currentLED = currentLED;
 }
 
-void Lobbies::begin() {
-}
-
 void Lobbies::reset() {
   preGameLobbyPos = totalLEDs - 1;  // leds are wired up counter clockwise
   postGameLobbyPos = totalLEDs - 1;
@@ -38,7 +35,7 @@ void Lobbies::reset() {
 void Lobbies::preGameLobby(int colour) {
   currentMillis = millis();
 
-  if (currentMillis - lastMillis >= 100) {
+  if (currentMillis - lastMillis >= 250) {
     lastMillis = currentMillis;
     setAllLEDs(colour);
 
@@ -99,7 +96,7 @@ void Lobbies::endGameLobby(int colour) {
 bool Lobbies::lobbyCountdownFinished(int timeLobbyCountdownStarted, int lobbyCountdownTime) {
   int lobbyCountdownTimeRemaining = lobbyCountdownTime - (millis() - timeLobbyCountdownStarted);
 
-  // printTimeRemaining(lobbyCountdownTimeRemaining);
+  if (false) printTimeRemaining(lobbyCountdownTimeRemaining);
 
   if (lobbyCountdownTimeRemaining < 0) {
     return true;
