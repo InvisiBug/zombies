@@ -32,10 +32,9 @@ class GameEngine : public Lobbies, public Game {
   void bottomButtonClicked();
 
  private:
-  int getTeamColour();
   void reset();
 
-  void showTimeLeft(int timeGameStarted);
+  void showTimeLeft(int startTime, int totalTime);
 
   CRGB *currentLED;  // LED strip object
 
@@ -51,7 +50,11 @@ class GameEngine : public Lobbies, public Game {
 
   int wifiChannel = 10;
 
-  int totalGameTime = 30 * 1000;  // In seconds
+  // int lobbyCountdownTime = 5 * 1000;       // In seconds
+  int lobbyCountdownTime = 2 * 60 * 1000;  // In mins
+
+  // int totalGameTime = 1 * 60 * 1000;   // In mins
+  int totalGameTime = 10 * 60 * 1000;  // In mins
 
   int team = human;
 

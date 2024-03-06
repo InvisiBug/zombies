@@ -15,7 +15,7 @@ class Lobbies : public LEDs {
   void countDownAnimation(int colour);
   void reset();
 
-  bool lobbyCountdownFinished(int timeLobbyCountdownStarted);
+  bool lobbyCountdownFinished(int timeLobbyCountdownStarted, int lobbyCountdownTime);
 
  private:
   void setAllLEDs(int colour);
@@ -34,8 +34,6 @@ class Lobbies : public LEDs {
   int lastMillis;
 
   bool flipFlop = false;
-
-  int countDownDuration = (5 * 1000);
 
   int preGameLobbyPos = totalLEDs - 1;   // leds are wired up counter clockwise
   int postGameLobbyPos = totalLEDs - 1;  // leds are wired up counter clockwise

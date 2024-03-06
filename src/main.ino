@@ -98,10 +98,10 @@ enum Mode {
 
 int team = human;
 
-int mode = dev;
+int mode = game;
 
 // * All stuff needed for the beacon mode
-int LEDBrightness = 10;   // As a percentage (saved as a dynamic variable to let us change later)
+int LEDBrightness = 100;   // As a percentage (saved as a dynamic variable to let us change later)
 int bitingDistance = 50;  //? Set to 40 for actual game
 
 int maxDistance = 100;

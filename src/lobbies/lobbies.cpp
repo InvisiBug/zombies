@@ -11,7 +11,7 @@ using namespace std;
 
 Lobbies::Lobbies() {}
 
-Lobbies::Lobbies(int totalLEDs, CRGB *currentLED):LEDs(totalLEDs, currentLED) {
+Lobbies::Lobbies(int totalLEDs, CRGB *currentLED) : LEDs(totalLEDs, currentLED) {
   this->totalLEDs = totalLEDs;
   this->currentLED = currentLED;
 }
@@ -55,38 +55,49 @@ void Lobbies::preGameLobby(int colour) {
   }
 }
 
-// TODO: Maybe include fire animation now that wifi is being handled else where
-void Lobbies::endGameLobby(int colour) {
-  Serial << "End Game Lobby" << endl;
-
+/*
+ * Flashes the team colour during the lobby countdown
+ */
+void Lobbies::countDownAnimation(int colour) {
   currentMillis = millis();
 
   if (currentMillis - lastMillis >= 250) {
     lastMillis = currentMillis;
+
     if (flipFlop) {
-      for (int i = 0; i < totalLEDs; i++) {
-        currentLED[i] = 0xff0000;
-      }
-      FastLED.show();
-      flipFlop = !flipFlop;
+      setAllLEDs(colour);
     } else {
-      for (int i = 0; i < totalLEDs; i++) {
-        currentLED[i] = 0x000000;
-      }
-      FastLED.show();
-      flipFlop = !flipFlop;
+      setAllLEDs(0x000000);
     }
+    flipFlop = !flipFlop;
+  }
+}
+
+// TODO: Maybe include fire animation now that wifi is being handled else where
+// ! Intentionally left here as will probs add the fire animation back in
+void Lobbies::endGameLobby(int colour) {
+  currentMillis = millis();
+
+  if (currentMillis - lastMillis >= 250) {
+    lastMillis = currentMillis;
+
+    if (flipFlop) {
+      setAllLEDs(0xff0000);
+    } else {
+      setAllLEDs(0x000000);
+    }
+    flipFlop = !flipFlop;
   }
 }
 
 /*
-  * Timer for the lobby countdown
-  returns true if the countdown is finished
-  returns false if the countdown is still running
-  timeLobbyCountdownStarted is set by the button click
-*/
-bool Lobbies::lobbyCountdownFinished(int timeLobbyCountdownStarted) {
-  int lobbyCountdownTimeRemaining = countDownDuration - (millis() - timeLobbyCountdownStarted);
+ * Timer for the lobby countdown
+ * returns true if the countdown is finished
+ * returns false if the countdown is still running
+ * timeLobbyCountdownStarted is set by the button click
+ */
+bool Lobbies::lobbyCountdownFinished(int timeLobbyCountdownStarted, int lobbyCountdownTime) {
+  int lobbyCountdownTimeRemaining = lobbyCountdownTime - (millis() - timeLobbyCountdownStarted);
 
   // printTimeRemaining(lobbyCountdownTimeRemaining);
 
@@ -113,22 +124,4 @@ void Lobbies::setAllLEDs(int colour) {
     currentLED[i] = colour;
   }
   FastLED.show();
-}
-
-void Lobbies::countDownAnimation(int colour) {
-  // setAllLEDs(colour);
-
-  for (int i = 0; i < 7; i++) {
-    currentLED[i] = colour;
-  }
-  FastLED.show();
-
-  delay(250);
-
-  for (int i = 0; i < 7; i++) {
-    currentLED[i] = 0x000000;
-  }
-  FastLED.show();
-
-  delay(250);
 }

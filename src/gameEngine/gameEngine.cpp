@@ -42,7 +42,7 @@ void GameEngine::run() {
        * Sit in the lobby changing team on a button press
        * move on to countdown on button press (below)
        */
-      lobbies.preGameLobby(getTeamColour());
+      lobbies.preGameLobby(game.getTeamColour(team));
       break;
 
     case countdown:
@@ -50,13 +50,14 @@ void GameEngine::run() {
        * if the timers not finished, run the animation
        * otherwise change the game state to "runGame" and note the time started
        */
-      if (!lobbies.lobbyCountdownFinished(timeLobbyCountdownStarted)) {
-        lobbies.countDownAnimation(getTeamColour());  // count down animation;
+      if (!lobbies.lobbyCountdownFinished(timeLobbyCountdownStarted, lobbyCountdownTime)) {
+        lobbies.countDownAnimation(game.getTeamColour(team));  // count down animation;
 
       } else {
         setGameState(runGame);
         timeGameStarted = millis();
         game.startWiFi(team);  // Only start wifi after the lobby has finished
+        game.setAllLEDs(0x000000);
       }
       break;
 
@@ -71,12 +72,22 @@ void GameEngine::run() {
       break;
 
     case postGame:
-      lobbies.endGameLobby(getTeamColour());
+      lobbies.endGameLobby(game.getTeamColour(team));
       break;
   }
 }
 
-// Buttons
+//////////////////////////////////////////////////////////////////////////////
+//
+// ######
+// #     # #    # ##### #####  ####  #    #  ####
+// #     # #    #   #     #   #    # ##   # #
+// ######  #    #   #     #   #    # # #  #  ####
+// #     # #    #   #     #   #    # #  # #      #
+// #     # #    #   #     #   #    # #   ## #    #
+// ######   ####    #     #    ####  #    #  ####
+//
+//////////////////////////////////////////////////////////////////////////////
 void GameEngine::topButtonClicked() {
   Serial << "Game Engine, Top Button Clicked" << endl;
 
@@ -85,9 +96,14 @@ void GameEngine::topButtonClicked() {
       team = !team;
       break;
 
+    case countdown:
+      Serial << "Show countdown time remaining" << endl;
+      showTimeLeft(timeLobbyCountdownStarted, lobbyCountdownTime);
+      break;
+
     case runGame:
       Serial << "Show game time remaining" << endl;
-      showTimeLeft(timeGameStarted);
+      showTimeLeft(timeGameStarted, totalGameTime);
       break;
 
     case postGame:
@@ -106,9 +122,14 @@ void GameEngine::bottomButtonClicked() {
       setGameState(countdown);
       break;
 
+    case countdown:
+      Serial << "Show countdown time remaining" << endl;
+      showTimeLeft(timeLobbyCountdownStarted, lobbyCountdownTime);
+      break;
+
     case runGame:
       Serial << "Show game time remaining" << endl;
-      showTimeLeft(timeGameStarted);
+      showTimeLeft(timeGameStarted, totalGameTime);
       // * LED class show time left, will need to be passed the time remaining
       break;
 
@@ -119,22 +140,18 @@ void GameEngine::bottomButtonClicked() {
   }
 }
 
-// TODO: Make lobby countdown show time remaining when pressing a button
-void GameEngine::showTimeLeft(int timeGameStarted) {
-  // int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);
-  int gameTimeLeft = totalGameTime - (millis() - timeGameStarted);
+void GameEngine::showTimeLeft(int startTime, int totalTime) {
+  game.setAllLEDs(0x000000);
 
-  Serial << "Game time left: " << gameTimeLeft << endl;
+  int timeLeft = totalTime - (millis() - startTime);
 
-  int indicatorLevel = map(gameTimeLeft, 0, totalGameTime - 100, 0, totalLEDs);  // ! Not sure what the -100 is here
+  Serial << "Game time left: " << timeLeft << endl;
+
+  int indicatorLevel = map(timeLeft, 0, totalTime - 100, 0, totalLEDs);  // ! Not sure what the -100 is here
 
   Serial << "Indicator Level: " << indicatorLevel << endl;
 
-  // showDistance(indicatorLevel, timeColour);
-  for (int i = 0; i < indicatorLevel; i++) {
-    currentLED[i] = timeColour;
-  }
-  FastLED.show();
+  game.setAllLEDs(timeColour);
 
   for (int i = totalLEDs; i > indicatorLevel; i--) {
     currentLED[i] = 0x000000;
@@ -142,38 +159,9 @@ void GameEngine::showTimeLeft(int timeGameStarted) {
   FastLED.show();
   delay(500);
 
-  for (int i = totalLEDs; i > 0; i--) {
-    currentLED[i] = 0x000000;
-  }
-  FastLED.show();
+  game.setAllLEDs(0x000000);
 }
 
 void GameEngine::setGameState(int gameState) {
   this->gameState = gameState;
-}
-
-//////////////////////////////////////////////////////////////////////////////
-//
-// ###
-//  #  #    # ##### ###### #####  #    #   ##   #
-//  #  ##   #   #   #      #    # #    #  #  #  #
-//  #  # #  #   #   #####  #    # #    # #    # #
-//  #  #  # #   #   #      #####  #    # ###### #
-//  #  #   ##   #   #      #   #   #  #  #    # #
-// ### #    #   #   ###### #    #   ##   #    # ######
-//
-//////////////////////////////////////////////////////////////////////////////
-int GameEngine::getTeamColour() {
-  switch (team) {
-    case human:
-      // Serial << "Human Colour" << endl;
-      return humanColour;
-      break;
-
-    case zombie:
-      // Serial << "Zombie Colour" << endl;
-      return zombieColour;
-      break;
-  }
-  return 0;  // Needed to prevent compile errors
 }

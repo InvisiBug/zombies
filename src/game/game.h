@@ -21,19 +21,20 @@ class Game {
   bool gameTimeRemaining(int timeGameStarted, int totalGameTime);
 
   int getTeamColour(int team);
+  void setAllLEDs(int colour);
 
  private:
   CRGB *currentLED;  // LED strip object
   int totalLEDs;
 
-  void setAllLEDs(int colour);
-
   int wifiChannel = 10;
+
+  bool log = true;  // Used to turn logging on and off
 
   int currentDistance;
   int maxDistance = 100;
-  int bitingDistance = 10;  //? Set to 40 for actual game
-  int timeTillTurned = 1.5 * 1000;
+  int bitingDistance = 50;          //? Set to 40 for actual game
+  int timeTillTurned = 1.5 * 1000;  // ! Not currently used
 
   //! Used for the buffered version of the game (Not implemented)
   // Set the buffer to biting distance + 1 to handle not finding the zombie network

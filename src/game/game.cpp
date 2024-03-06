@@ -32,44 +32,49 @@ Game::Game(int totalLEDs, CRGB *currentLED) {
 */
 void Game::run(int &team) {
   int n = WiFi.scanNetworks(false, false, wifiChannel);
+  if (log) Serial << n << endl;
+  if (n < 1) {
+    setAllLEDs(0x000000);
 
-  if (team == human) {
-    currentDistance = maxDistance;
+  } else {
+    if (team == human) {
+      currentDistance = maxDistance;
 
-    for (int i = 0; i < n; i++) {
-      if (WiFi.SSID(i).indexOf("Zombie") != -1) {
-        int currentDistance = abs(WiFi.RSSI(i));
+      for (int i = 0; i < n; i++) {
+        if (WiFi.SSID(i).indexOf("Zombie") != -1) {
+          int currentDistance = abs(WiFi.RSSI(i));
 
-        Serial << "Current Distance" << currentDistance << "\tMax Distance:" << maxDistance << endl;  // Print out distance
+          if (log) Serial << "Current Distance" << currentDistance << "\tMax Distance:" << maxDistance << endl;  // Print out distance
 
-        showDistance(currentDistance, humanColour);
+          showDistance(currentDistance, humanColour);
 
-        if (currentDistance < bitingDistance) {
-          Serial << "Turned" << endl;
+          if (currentDistance < bitingDistance) {
+            if (log) Serial << "Turned" << endl;
 
-          for (int i = 0; i < 5; i++) {
-            setAllLEDs(zombieColour);
-            delay(500);
-            setAllLEDs(0x000000);
-            delay(500);
+            for (int i = 0; i < 5; i++) {
+              setAllLEDs(zombieColour);
+              delay(500);
+              setAllLEDs(0x000000);
+              delay(500);
+            }
+
+            team = zombie;  // Team has been passed by reference from the game engine (super dodgy but it works for now)
+            startWiFi(team);
           }
-
-          team = zombie;
-          startWiFi(team);
         }
       }
     }
-  }
 
-  else if (team == zombie)  // Zombie Team
-  {
-    currentDistance = maxDistance;
+    else if (team == zombie)  // Zombie Team
+    {
+      currentDistance = maxDistance;
 
-    for (int i = 0; i < n; i++) {
-      if (WiFi.SSID(i).indexOf("Human") != -1) {
-        // Human close
-        currentDistance = abs(WiFi.RSSI(i));
-        showDistance(currentDistance, zombieColour);
+      for (int i = 0; i < n; i++) {
+        if (WiFi.SSID(i).indexOf("Human") != -1) {
+          // Human close
+          currentDistance = abs(WiFi.RSSI(i));
+          showDistance(currentDistance, zombieColour);
+        }
       }
     }
   }
@@ -88,7 +93,7 @@ void Game::startWiFi(int team) {
   */
   switch (team) {
     case human:
-      Serial << "Player is a human" << endl;
+      if (log) Serial << "Player is a human" << endl;
 
       char humanssid[25];
       snprintf(humanssid, 25, "Human-%06X", ESP.getChipId());
@@ -98,7 +103,7 @@ void Game::startWiFi(int team) {
 
     case zombie:
       // Create a zombie wifi network using the chip id, can be used later to track individual zombies
-      Serial << "Player is a zombie" << endl;
+      if (log) Serial << "Player is a zombie" << endl;
 
       char zombiessid[25];
       snprintf(zombiessid, 25, "Zombie-%06X", ESP.getChipId());

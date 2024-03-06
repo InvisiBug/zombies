@@ -19,18 +19,9 @@
  * Started by the bottom button click when in the lobby
  */
 void startWiFi() {
-  // allOff();
   WiFi.mode(WIFI_OFF);  // Clears the last wifi credentials
+  delay(100);           // Added to try and prevent crashing (Remove if not possible)
 
-  delay(100);  // Added to try and prevent crashing (Remove if not possible)
-
-  // WiFi.mode(WIFI_AP_STA); // Wifi Modes (WIFI_OFF, WIFI_STA, WIFI_AP, WIFI_AP_STA)
-  // WiFi.softAP("Zombies", NULL, wifiChannel);  //* Using a specific wifi channel, makes scanning later much faster
-
-  /*
-    Create the appropriat network for the team, adding the chip id on the end
-    can be used for tracking players at a later date
-  */
   switch (team) {
     case human:
       Serial << "Player is a human" << endl;
@@ -38,7 +29,6 @@ void startWiFi() {
       char humanssid[25];
       snprintf(humanssid, 25, "Human-%06X", ESP.getChipId());
       WiFi.softAP(humanssid, NULL, wifiChannel);
-
       break;
 
     case zombie:
